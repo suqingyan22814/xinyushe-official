@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新雨社门户 - 内容管理后台</title>
-    <!-- 加载脚本前强制开启手动初始化，禁用自动OAuth跳转 -->
+    <!-- 必须在加载脚本前开启手动初始化，禁用自动初始化 -->
     <script>
         window.CMS_MANUAL_INIT = true;
-        window.CMS_DISABLE_NETLIFY_AUTH = true;
     </script>
     <script src="https://unpkg.com/decap-cms@3.1.1/dist/decap-cms.js"></script>
 </head>
@@ -19,11 +18,514 @@
                 document.body.innerText = "后台脚本加载失败，请刷新重试或检查网络";
                 return;
             }
-            // 强制使用配置文件中的令牌认证模式
-            window.CMS.init({
-                config_url: "/admin/config.yml",
-                load_config_file: true
-            });
+
+            // 完整配置直接内嵌，完全不依赖外部config.yml
+            const fullConfig = {
+                backend: {
+                    name: "github",
+                    repo: "suqingyan22814/xinyushe-official",
+                    branch: "main",
+                    auth_type: "token",
+                    base_url: "",
+                    site_domain: "xinyushe.pages.dev",
+                    commit_messages: {
+                        create: '新增 {{collection}} 《{{title}}》',
+                        update: '更新 {{collection}} 《{{title}}》',
+                        delete: '删除 {{collection}} 《{{title}}》',
+                        upload: '上传资源文件'
+                    }
+                },
+                site_url: "https://xinyushe.pages.dev",
+                display_url: "https://xinyushe.pages.dev",
+                logo_url: "/logo-qunxi.jpg",
+                media_folder: "static/uploads",
+                public_folder: "/static/uploads",
+                locale: "zh_CN",
+                collections: [
+                    {
+                        name: "site",
+                        label: "站点全局配置",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "site-settings",
+                                label: "全局参数设置",
+                                file: "data/site.json",
+                                fields: [
+                                    { label: "顶部滚动公告", name: "scrollNotice", widget: "textarea" },
+                                    { label: "全域总人数", name: "totalMembers", widget: "number" },
+                                    { label: "总管名称", name: "chiefManager", widget: "string" },
+                                    { label: "代总群主", name: "actingLeader", widget: "string" },
+                                    { label: "档案编纂人员", name: "compilers", widget: "string" },
+                                    { label: "参考资料", name: "references", widget: "textarea" },
+                                    { label: "备案编号", name: "recordNumber", widget: "string" },
+                                    { label: "技术维护方", name: "maintainer", widget: "string" },
+                                    { label: "底部版权文字", name: "copyright", widget: "string" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "banner",
+                        label: "首页轮播横幅",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "banner-data",
+                                label: "轮播内容管理",
+                                file: "data/banner.json",
+                                fields: [
+                                    {
+                                        label: "轮播条目列表",
+                                        name: "items",
+                                        widget: "list",
+                                        fields: [
+                                            { label: "类型", name: "type", widget: "select", options: ["image", "text"] },
+                                            { label: "图片地址", name: "src", widget: "string", required: false },
+                                            { label: "图片说明", name: "alt", widget: "string", required: false },
+                                            { label: "展示文字", name: "text", widget: "textarea", required: false }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "news",
+                        label: "全域公告列表",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "news-list",
+                                label: "公告内容管理",
+                                file: "data/news.json",
+                                fields: [
+                                    {
+                                        label: "公告条目",
+                                        name: "items",
+                                        widget: "list",
+                                        fields: [
+                                            { label: "公告标题", name: "name", widget: "string" },
+                                            { label: "发布日期", name: "date", widget: "string" }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "timeline",
+                        label: "首页时间线",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "timeline-data",
+                                label: "时间线内容管理",
+                                file: "data/timeline.json",
+                                fields: [
+                                    {
+                                        label: "时间线条目",
+                                        name: "items",
+                                        widget: "list",
+                                        fields: [
+                                            { label: "时间标题", name: "date", widget: "string" },
+                                            { label: "内容描述", name: "content", widget: "textarea" },
+                                            { label: "是否高亮当前", name: "active", widget: "boolean" }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "people",
+                        label: "社群人物档案",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "people-data",
+                                label: "人物档案管理",
+                                file: "data/people.json",
+                                fields: [
+                                    {
+                                        label: "胡安", name: "juan", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "游客", name: "youke", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "青喧", name: "qingxuan", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "雨姐", name: "yujie", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "酸菜", name: "suan_cai", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "小雨", name: "xiaoyu", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "二喵", name: "ermiao", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "坑", name: "keng", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "梧", name: "wu", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "露白", name: "lubai", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "蓝猫", name: "lanmao", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "胡桃", name: "hutao", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "禹", name: "yu", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    },
+                                    {
+                                        label: "周天子", name: "zhou_tianzi", widget: "object",
+                                        fields: [
+                                            { label: "头像路径", name: "img", widget: "string" },
+                                            { label: "人物全名", name: "name", widget: "string" },
+                                            { label: "职务头衔", name: "post", widget: "string" },
+                                            { label: "详细履历", name: "text", widget: "textarea" },
+                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "zones",
+                        label: "雨群分区数据",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "zones-data",
+                                label: "分区数据管理",
+                                file: "data/zones.json",
+                                fields: [
+                                    ["1","一区"],["2","二区"],["3","三区"],["4","四区"],["5","五区"],
+                                    ["6","六区"],["7","七区"],["8","八区"],["9","九区"],["10","十区"],
+                                    ["11","十一区"],["12","十二区"],["13","十三区"],["14","十四区"],["15","十五区"],
+                                    ["16","十六区"],["17","十七区"],["qcs","青城司"],["qws","群务司"],["ziyou","自由区"]
+                                ].map(([id, label]) => ({
+                                    label: label,
+                                    name: id,
+                                    widget: "object",
+                                    fields: [
+                                        { label: "分区简称", name: "name", widget: "string" },
+                                        { label: "完整群名", name: "fullName", widget: "string" },
+                                        { label: "简短描述", name: "desc", widget: "string" },
+                                        { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
+                                        { label: "加群链接", name: "url", widget: "string", required: false },
+                                        { label: "分区详情", name: "detail", widget: "textarea" }
+                                    ]
+                                }))
+                            }
+                        ]
+                    },
+                    {
+                        name: "events",
+                        label: "重大专题事件",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "events-data",
+                                label: "事件专题管理",
+                                file: "data/events.json",
+                                fields: [
+                                    {
+                                        label: "四一零事件", name: "siyiling", widget: "object",
+                                        fields: [
+                                            { label: "事件名称", name: "name", widget: "string" },
+                                            { label: "简短副标题", name: "desc", widget: "string" },
+                                            { label: "完整详情", name: "text", widget: "textarea" }
+                                        ]
+                                    },
+                                    {
+                                        label: "八一七事件", name: "bayiqi", widget: "object",
+                                        fields: [
+                                            { label: "事件名称", name: "name", widget: "string" },
+                                            { label: "简短副标题", name: "desc", widget: "string" },
+                                            { label: "完整详情", name: "text", widget: "textarea" }
+                                        ]
+                                    },
+                                    {
+                                        label: "五二八整风", name: "wuerba", widget: "object",
+                                        fields: [
+                                            { label: "事件名称", name: "name", widget: "string" },
+                                            { label: "简短副标题", name: "desc", widget: "string" },
+                                            { label: "完整详情", name: "text", widget: "textarea" }
+                                        ]
+                                    },
+                                    {
+                                        label: "获月风暴", name: "huoyue", widget: "object",
+                                        fields: [
+                                            { label: "事件名称", name: "name", widget: "string" },
+                                            { label: "简短副标题", name: "desc", widget: "string" },
+                                            { label: "完整详情", name: "text", widget: "textarea" }
+                                        ]
+                                    },
+                                    {
+                                        label: "黑龙合并", name: "heilong", widget: "object",
+                                        fields: [
+                                            { label: "事件名称", name: "name", widget: "string" },
+                                            { label: "简短副标题", name: "desc", widget: "string" },
+                                            { label: "完整详情", name: "text", widget: "textarea" }
+                                        ]
+                                    },
+                                    {
+                                        label: "青城司成立", name: "qingcheng", widget: "object",
+                                        fields: [
+                                            { label: "事件名称", name: "name", widget: "string" },
+                                            { label: "简短副标题", name: "desc", widget: "string" },
+                                            { label: "完整详情", name: "text", widget: "textarea" }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "modList",
+                        label: "MOD公示列表",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "mod-list-data",
+                                label: "MOD列表管理",
+                                file: "data/mod-list.json",
+                                fields: [
+                                    {
+                                        label: "MOD条目",
+                                        name: "items",
+                                        widget: "list",
+                                        fields: [
+                                            { label: "项目名称", name: "name", widget: "string" },
+                                            { label: "状态标签", name: "status", widget: "string" }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "modTimeline",
+                        label: "MOD开发年表",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "mod-timeline-data",
+                                label: "MOD年表管理",
+                                file: "data/mod-timeline.json",
+                                fields: [
+                                    {
+                                        label: "年表条目",
+                                        name: "items",
+                                        widget: "list",
+                                        fields: [
+                                            { label: "时间节点", name: "date", widget: "string" },
+                                            { label: "项目说明", name: "name", widget: "string" }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "wiki",
+                        label: "社群百科词条",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "wiki-data",
+                                label: "百科内容管理",
+                                file: "data/wiki.json",
+                                fields: [
+                                    {
+                                        label: "基础概念", name: "base", widget: "list",
+                                        fields: [
+                                            { label: "词条名", name: "name", widget: "string" },
+                                            { label: "释义", name: "desc", widget: "textarea" }
+                                        ]
+                                    },
+                                    {
+                                        label: "组织架构", name: "org", widget: "list",
+                                        fields: [
+                                            { label: "词条名", name: "name", widget: "string" },
+                                            { label: "释义", name: "desc", widget: "textarea" }
+                                        ]
+                                    },
+                                    {
+                                        label: "规章制度", name: "rule", widget: "object",
+                                        fields: [
+                                            { label: "完整HTML内容", name: "html", widget: "textarea" }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "faq",
+                        label: "常见问答FAQ",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "faq-data",
+                                label: "FAQ内容管理",
+                                file: "data/faq.json",
+                                fields: [
+                                    {
+                                        label: "FAQ列表",
+                                        name: "items",
+                                        widget: "list",
+                                        fields: [
+                                            { label: "问题", name: "question", widget: "string" },
+                                            { label: "回答", name: "answer", widget: "textarea" }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        name: "historyVolumes",
+                        label: "社群编年通史",
+                        format: "json",
+                        editor: { preview: false },
+                        files: [
+                            {
+                                name: "history-data",
+                                label: "通史内容管理",
+                                file: "data/history-volumes.json",
+                                fields: [
+                                    {
+                                        label: "通史卷册",
+                                        name: "items",
+                                        widget: "list",
+                                        fields: [
+                                            { label: "卷标题", name: "title", widget: "string" },
+                                            { label: "完整内容", name: "content", widget: "textarea" }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            // 强制传入配置，不读取外部文件
+            window.CMS.init({ config: fullConfig });
         });
     </script>
 </body>
