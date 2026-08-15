@@ -4,23 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新雨社门户 - 内容管理后台</title>
-    <!-- 换用 cdnjs 源，国内访问稳定性更高 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/decap-cms/3.1.1/decap-cms.min.js"></script>
 </head>
 <body>
     <div id="nc-root"></div>
     <script>
-        // 确保资源完全加载后再初始化
-        window.addEventListener('load', function() {
+        // CDN源列表，按优先级依次尝试
+        const cdnList = [
+            "https://unpkg.com/decap-cms@3.1.1/dist/decap-cms.js",
+            "https://cdn.jsdelivr.net/npm/decap-cms@3.1.1/dist/decap-cms.js",
+            "https://cdnjs.cloudflare.com/ajax/libs/decap-cms/3.1.1/decap-cms.min.js"
+        ];
+
+        let currentIndex = 0;
+
+        function loadCms() {
+            if (currentIndex >= cdnList.length) {
+                document.body.innerText = "所有CDN均加载失败，请使用方案二本地部署脚本";
+                return;
+            }
+            const script = document.createElement('script');
+            script.src = cdnList[currentIndex];
+            script.onload = initCms;
+            script.onerror = () => {
+                currentIndex++;
+                loadCms();
+            };
+            document.head.appendChild(script);
+        }
+
+        function initCms() {
             if (window.CMS) {
                 window.CMS_MANUAL_INIT = true;
                 window.CMS.init({
                     config_url: "/admin/config.yml"
                 });
             } else {
-                document.body.innerText = "后台脚本加载失败，请刷新重试或检查网络";
+                currentIndex++;
+                loadCms();
             }
-        });
+        }
+
+        window.addEventListener('load', loadCms);
     </script>
 </body>
 </html>
