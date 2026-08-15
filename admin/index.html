@@ -4,16 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新雨社门户 - 内容管理后台</title>
-    <script src="https://cdn.jsdelivr.net/npm/decap-cms@3.1.1/dist/decap-cms.js"></script>
+    <!-- 换用 unpkg 源，比 jsdelivr 国内更稳定 -->
+    <script src="https://unpkg.com/decap-cms@3.1.1/dist/decap-cms.js"></script>
 </head>
 <body>
     <div id="nc-root"></div>
     <script>
-        window.CMS_MANUAL_INIT = true;
-        const CMS = window.CMS;
-        CMS.init({
-            config_url: "/admin/config.yml",
-            manual_init: true
+        // 等待页面和JS完全加载后再初始化
+        window.addEventListener('load', function() {
+            window.CMS_MANUAL_INIT = true;
+            window.CMS.init({
+                config_url: "/admin/config.yml"
+            });
         });
     </script>
 </body>
