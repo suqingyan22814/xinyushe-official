@@ -2,6 +2,7 @@ backend:
   name: github
   repo: suqingyan22814/xinyushe-official
   branch: main
+  auth_type: token
   site_domain: xinyushe.pages.dev
   commit_messages:
     create: '新增 {{collection}} 《{{title}}》'
