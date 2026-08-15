@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新雨社门户 - 内容管理后台</title>
-    <!-- 双重保险：同时设置新旧版手动初始化变量，绝对禁止自动初始化 -->
     <script>
+        // 强制开启手动初始化，禁止自动加载任何外部配置
         window.CMS_MANUAL_INIT = true;
-        window.DECAP_CMS_MANUAL_INIT = true;
-        // 提前清除URL认证残留，避免误触发跳转
-        if (location.hash.includes('access_token') || location.hash.includes('error') || location.href.includes('netlify')) {
+        // 清除URL认证残留，避免跳转
+        if (location.hash.includes('access_token') || location.hash.includes('error')) {
             history.replaceState(null, '', '/admin/');
         }
     </script>
-    <!-- 使用2.x长期稳定版，令牌认证模式成熟，无兼容问题 -->
     <script src="https://cdn.jsdelivr.net/npm/netlify-cms@2.10.192/dist/netlify-cms.js"></script>
 </head>
 <body>
@@ -25,7 +23,6 @@
                 return;
             }
 
-            // 全量内嵌配置，完全不依赖任何外部文件
             const fullConfig = {
                 backend: {
                     name: "github",
@@ -33,18 +30,9 @@
                     branch: "main",
                     auth_type: "token",
                     base_url: "",
-                    auth_endpoint: "",
-                    site_domain: "xinyushe.pages.dev",
-                    commit_messages: {
-                        create: '新增 {{collection}} 《{{title}}》',
-                        update: '更新 {{collection}} 《{{title}}》',
-                        delete: '删除 {{collection}} 《{{title}}》',
-                        upload: '上传资源文件'
-                    }
+                    site_domain: "xinyushe.pages.dev"
                 },
                 site_url: "https://xinyushe.pages.dev",
-                display_url: "https://xinyushe.pages.dev",
-                logo_url: "/logo-qunxi.jpg",
                 media_folder: "static/uploads",
                 public_folder: "/static/uploads",
                 locale: "zh_CN",
@@ -198,106 +186,6 @@
                                             { label: "详细履历", name: "text", widget: "textarea" },
                                             { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
                                         ]
-                                    },
-                                    {
-                                        label: "酸菜", name: "suan_cai", widget: "object",
-                                        fields: [
-                                            { label: "头像路径", name: "img", widget: "string" },
-                                            { label: "人物全名", name: "name", widget: "string" },
-                                            { label: "职务头衔", name: "post", widget: "string" },
-                                            { label: "详细履历", name: "text", widget: "textarea" },
-                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
-                                        ]
-                                    },
-                                    {
-                                        label: "小雨", name: "xiaoyu", widget: "object",
-                                        fields: [
-                                            { label: "头像路径", name: "img", widget: "string" },
-                                            { label: "人物全名", name: "name", widget: "string" },
-                                            { label: "职务头衔", name: "post", widget: "string" },
-                                            { label: "详细履历", name: "text", widget: "textarea" },
-                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
-                                        ]
-                                    },
-                                    {
-                                        label: "二喵", name: "ermiao", widget: "object",
-                                        fields: [
-                                            { label: "头像路径", name: "img", widget: "string" },
-                                            { label: "人物全名", name: "name", widget: "string" },
-                                            { label: "职务头衔", name: "post", widget: "string" },
-                                            { label: "详细履历", name: "text", widget: "textarea" },
-                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
-                                        ]
-                                    },
-                                    {
-                                        label: "坑", name: "keng", widget: "object",
-                                        fields: [
-                                            { label: "头像路径", name: "img", widget: "string" },
-                                            { label: "人物全名", name: "name", widget: "string" },
-                                            { label: "职务头衔", name: "post", widget: "string" },
-                                            { label: "详细履历", name: "text", widget: "textarea" },
-                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
-                                        ]
-                                    },
-                                    {
-                                        label: "梧", name: "wu", widget: "object",
-                                        fields: [
-                                            { label: "头像路径", name: "img", widget: "string" },
-                                            { label: "人物全名", name: "name", widget: "string" },
-                                            { label: "职务头衔", name: "post", widget: "string" },
-                                            { label: "详细履历", name: "text", widget: "textarea" },
-                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
-                                        ]
-                                    },
-                                    {
-                                        label: "露白", name: "lubai", widget: "object",
-                                        fields: [
-                                            { label: "头像路径", name: "img", widget: "string" },
-                                            { label: "人物全名", name: "name", widget: "string" },
-                                            { label: "职务头衔", name: "post", widget: "string" },
-                                            { label: "详细履历", name: "text", widget: "textarea" },
-                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
-                                        ]
-                                    },
-                                    {
-                                        label: "蓝猫", name: "lanmao", widget: "object",
-                                        fields: [
-                                            { label: "头像路径", name: "img", widget: "string" },
-                                            { label: "人物全名", name: "name", widget: "string" },
-                                            { label: "职务头衔", name: "post", widget: "string" },
-                                            { label: "详细履历", name: "text", widget: "textarea" },
-                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
-                                        ]
-                                    },
-                                    {
-                                        label: "胡桃", name: "hutao", widget: "object",
-                                        fields: [
-                                            { label: "头像路径", name: "img", widget: "string" },
-                                            { label: "人物全名", name: "name", widget: "string" },
-                                            { label: "职务头衔", name: "post", widget: "string" },
-                                            { label: "详细履历", name: "text", widget: "textarea" },
-                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
-                                        ]
-                                    },
-                                    {
-                                        label: "禹", name: "yu", widget: "object",
-                                        fields: [
-                                            { label: "头像路径", name: "img", widget: "string" },
-                                            { label: "人物全名", name: "name", widget: "string" },
-                                            { label: "职务头衔", name: "post", widget: "string" },
-                                            { label: "详细履历", name: "text", widget: "textarea" },
-                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
-                                        ]
-                                    },
-                                    {
-                                        label: "周天子", name: "zhou_tianzi", widget: "object",
-                                        fields: [
-                                            { label: "头像路径", name: "img", widget: "string" },
-                                            { label: "人物全名", name: "name", widget: "string" },
-                                            { label: "职务头衔", name: "post", widget: "string" },
-                                            { label: "详细履历", name: "text", widget: "textarea" },
-                                            { label: "是否显示按钮", name: "hasAction", widget: "boolean" }
-                                        ]
                                     }
                                 ]
                             }
@@ -346,193 +234,6 @@
                                             { label: "加群链接", name: "url", widget: "string", required: false },
                                             { label: "分区详情", name: "detail", widget: "textarea" }
                                         ]
-                                    },
-                                    {
-                                        label: "四区", name: "4", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "五区", name: "5", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "六区", name: "6", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "七区", name: "7", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "八区", name: "8", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "九区", name: "9", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "十区", name: "10", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "十一区", name: "11", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "十二区", name: "12", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "十三区", name: "13", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "十四区", name: "14", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "十五区", name: "15", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "十六区", name: "16", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "十七区", name: "17", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "青城司", name: "qcs", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "群务司", name: "qws", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "自由区", name: "ziyou", widget: "object",
-                                        fields: [
-                                            { label: "分区简称", name: "name", widget: "string" },
-                                            { label: "完整群名", name: "fullName", widget: "string" },
-                                            { label: "简短描述", name: "desc", widget: "string" },
-                                            { label: "状态", name: "status", widget: "select", options: ["open", "disabled", "canceled", "banned"] },
-                                            { label: "加群链接", name: "url", widget: "string", required: false },
-                                            { label: "分区详情", name: "detail", widget: "textarea" }
-                                        ]
                                     }
                                 ]
                             }
@@ -559,38 +260,6 @@
                                     },
                                     {
                                         label: "八一七事件", name: "bayiqi", widget: "object",
-                                        fields: [
-                                            { label: "事件名称", name: "name", widget: "string" },
-                                            { label: "简短副标题", name: "desc", widget: "string" },
-                                            { label: "完整详情", name: "text", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "五二八整风", name: "wuerba", widget: "object",
-                                        fields: [
-                                            { label: "事件名称", name: "name", widget: "string" },
-                                            { label: "简短副标题", name: "desc", widget: "string" },
-                                            { label: "完整详情", name: "text", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "获月风暴", name: "huoyue", widget: "object",
-                                        fields: [
-                                            { label: "事件名称", name: "name", widget: "string" },
-                                            { label: "简短副标题", name: "desc", widget: "string" },
-                                            { label: "完整详情", name: "text", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "黑龙合并", name: "heilong", widget: "object",
-                                        fields: [
-                                            { label: "事件名称", name: "name", widget: "string" },
-                                            { label: "简短副标题", name: "desc", widget: "string" },
-                                            { label: "完整详情", name: "text", widget: "textarea" }
-                                        ]
-                                    },
-                                    {
-                                        label: "青城司成立", name: "qingcheng", widget: "object",
                                         fields: [
                                             { label: "事件名称", name: "name", widget: "string" },
                                             { label: "简短副标题", name: "desc", widget: "string" },
@@ -735,7 +404,7 @@
                 ]
             };
 
-            // 强制传入配置，彻底禁用外部配置文件加载
+            // 仅使用内嵌配置，彻底禁用外部配置文件加载
             window.CMS.init({
                 config: fullConfig,
                 load_config_file: false
