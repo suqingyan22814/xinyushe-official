@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="文明时代2新雨社官方门户，雨群综合服务平台，提供MOD交流、群史档案、分区入口、社群百科等服务。">
+    <meta name="keywords" content="文明时代2,新雨社,雨群,MOD,君役天下,火燎之路,文游推演">
+    <meta property="og:title" content="文明时代2新雨社官方门户 | 雨群综合服务平台">
+    <meta property="og:description" content="雨群官方门户，MOD交流&文游推演综合社群，全域在册10012人">
+    <meta property="og:type" content="website">
+    <title>文明时代2新雨社官方门户 | 雨群综合服务平台</title>
+    <style>
+        :root {
+            --primary: #004099;
+            --primary-dark: #002d6b;
+            --primary-deep: #002257;
+            --primary-light: #5086d8;
+            --bg-light: #f0f6ff;
+            --border: #e1e7f2;
+            --text-main: #333;
+            --text-secondary: #666;
+            --text-muted: #888;
+            --bg-body: #fff;
+            --card-bg: #fff;
+            --shadow: 0 1px 4px #f0f4fc;
+            --shadow-hover: 0 4px 12px #dce6f7;
+        }
+        [data-theme="dark"] {
+            --primary: #4a7fd1;
+            --primary-dark: #365fa8;
+            --primary-deep: #1a3366;
+            --primary-light: #7aa6e8;
+            --bg-light: #1a2438;
+            --border: #2a3550;
+            --text-main: #e0e6f0;
+            --text-secondary: #a0aabc;
+            --text-muted: #707a90;
+            --bg-body: #0f172a;
+            --card-bg: #162033;
+            --shadow: 0 1px 4px rgba(0,0,0,0.3);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", SimSun, sans-serif;
+            transform: translateZ(0);
+        }
+        html {
+            scroll-padding-top: 56px;
+            scroll-behavior: smooth;
+        }
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
+            background: var(--bg-body);
+            transition: background 0.3s, color 0.3s;
+        }
+        ul { list-style: none; }
+        a { text-decoration: none; color: inherit; }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+        ::-webkit-scrollbar-track { background: #f1f5fc; }
+        [data-theme="dark"] ::-webkit-scrollbar-track { background: #1a2438; }
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 10px 12px;
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+        .scroll-notice {
+            background: var(--primary-dark);
+            color: #fff;
+            height: 32px;
+            line-height: 32px;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+        .scroll-text {
+            white-space: nowrap;
+            animation: scroll 28s linear infinite;
+            display: inline-block;
+            font-size: 13px;
+            padding-left: 100%;
+        }
+        .scroll-notice:hover .scroll-text { animation-play-state: paused; }
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+        .top-right {
+            position: absolute;
+            top: 0;
+            right: 3%;
+            height: 32px;
+            background: var(--primary-dark);
+            padding-left: 10px;
+            z-index: 2;
+        }
+        .top-right a {
+            color: #c6d8f5;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+        .top-right a:hover { color: #fff; }
+        .header {
+            background: var(--card-bg);
+            padding: 14px 3%;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 2px 4px #e0e9f8;
+            width: 100%;
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        [data-theme="dark"] .header { box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .logo-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            overflow: hidden;
+            border: 2px solid var(--primary);
+            background: var(--bg-light);
+        }
+        .logo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .header-title h1 {
+            color: var(--primary-dark);
+            font-size: 22px;
+            letter-spacing: 2px;
+        }
+        .header-title p {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+        nav {
+            background: var(--primary);
+            padding: 0 3%;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            box-shadow: 0 2px 4px rgba(0,40,153,0.2);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-main {
+            display: flex;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+        .nav-item { position: relative; }
+        .nav-item > a {
+            display: block;
+            padding: 14px 12px;
+            color: #fff;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .nav-item > a:hover { background: var(--primary-dark) }
+        .nav-item.active > a { background: var(--primary-dark) }
+        .sub-nav {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 180px;
+            background: var(--card-bg);
+            box-shadow: 0 2px 8px #ccc;
+            display: none;
+            z-index: 100;
+        }
+        [data-theme="dark"] .sub-nav { box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+        .sub-nav li a {
+            display: block;
+            padding: 10px 14px;
+            color: var(--primary-dark);
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .sub-nav li a:hover { background: var(--bg-light); color: var(--primary); padding-left: 16px; }
+        .nav-item:hover .sub-nav { display: block; }
+        .nav-search {
+            position: relative;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-search input {
+            width: 160px;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 3px;
+            font-size: 13px;
+            outline: none;
+            background: rgba(255,255,255,0.9);
+        }
+        .nav-search input:focus { background: #fff; }
+        .search-result {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 320px;
+            max-height: 400px;
+            overflow-y: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-shadow: var(--shadow-hover);
+            margin-top: 4px;
+            display: none;
+            z-index: 200;
+        }
+        .search-result.show { display: block; }
+        .search-group {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: bold;
+            background: var(--bg-light);
+        }
+        .search-item {
+            padding: 8px 12px;
+            font-size: 13px;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .search-item:hover {
+            background: var(--bg-light);
+            padding-left: 14px;
+        }
+        .search-empty {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .hamburger {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 10px;
+        }
+        .banner-wrap {
+            width: 94%;
+            margin: 12px auto;
+            height: 220px;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 8px #d4e1f5;
+            touch-action: pan-y;
+        }
+        [data-theme="dark"] .banner-wrap { box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .banner-list {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s ease-out;
+        }
+        .banner-item {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 30px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(135deg,#2458aa,#5086d8);
+            position: relative;
+        }
+        .banner-item.img-banner {
+            padding: 0;
+            background: #002257;
+        }
+        .banner-item.img-banner img {
+            height: 100%;
+            object-fit: contain;
+            margin: 0 auto;
+        }
+        .banner-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            z-index: 2;
+        }
+        .banner-btn:hover { background: rgba(255,255,255,0.4); }
+        .prev { left: 12px; }
+        .next { right: 12px; }
+        .banner-dots {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+        .banner-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .banner-dot.active {
+            background: #fff;
+            width: 20px;
+            border-radius: 4px;
+        }
+        .container {
+            width: 94%;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: 68% 30%;
+            gap: 2%;
+            transition: grid-template-columns 0.3s ease;
+        }
+        .container.collapse-side { grid-template-columns: 100% 0%; }
+        .container.collapse-side .right-side { display: none; }
+        .right-side {
+            display: flex;
+            flex-direction: column;
+        }
+        .card {
+            border: 1px solid var(--border);
+            padding: 16px;
+            margin-bottom: 18px;
+            border-radius: 4px;
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.3s, transform 0.3s, background 0.3s;
+        }
+        .card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+        .card h2 {
+            font-size: 16px;
+            color: var(--primary-dark);
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .collapse-btn {
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+        .collapse-btn:hover { background: var(--primary-dark); }
+        .news-list li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            transition: padding-left 0.2s;
+        }
+        [data-theme="dark"] .news-list li { border-bottom-color: #2a3550; }
+        .news-list li:hover { padding-left: 4px; }
+        .news-list li a { color: var(--text-main); }
+        .news-list li a:hover { color: var(--primary); }
+        .date-tag { color: var(--text-muted); font-size: 12px }
+        .collapse-panel {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+        .panel-head {
+            background: var(--bg-light);
+            padding: 10px 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--primary-dark);
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .panel-head:hover { background: #e0ebff; }
+        [data-theme="dark"] .panel-head:hover { background: #253350; }
+        .panel-head .arrow {
+            transition: transform 0.2s;
+            font-size: 12px;
+        }
+        .panel-head.open .arrow { transform: rotate(90deg); }
+        .panel-body {
+            padding: 0 14px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-main);
+        }
+        .panel-body.open {
+            padding: 12px 14px;
+            max-height: 3000px;
+        }
+        .zone-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .zone-item {
+            background: var(--bg-light);
+            padding: 10px 6px;
+            text-align: center;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            color: var(--primary-dark);
+            line-height: 1.4;
+            position: relative;
+        }
+        .zone-item:hover:not(.disabled):not(.canceled):not(.banned) {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+        .zone-item.disabled {
+            background: #f0f0f0;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+        [data-theme="dark"] .zone-item.disabled {
+            background: #1e2535;
+            color: #666;
+        }
+        .zone-item.disabled::after {
+            content: "未开放";
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            font-size: 10px;
+            color: #999;
+        }
+        .zone-item.canceled {
+            background: #f5f5f5;
+            color: #bbb;
+            cursor: not-allowed;
+        }
+        [data-theme="dark"] .zone-item.canceled {
+            background: #1e2535;
+            color: #666;
+        }
+        .zone-item.canceled::after {
+            content: "已取消";
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            font-size: 10px;
+            color: #bbb;
+        }
+        .zone-item.banned {
+            background: #f8e8e8;
+            color: #c97c7c;
+            cursor: not-allowed;
+        }
+        [data-theme="dark"] .zone-item.banned {
+            background: #2a1e1e;
+            color: #a86060;
+        }
+        .zone-item.banned::after {
+            content: "已封禁";
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            font-size: 10px;
+            color: #c97c7c;
+        }
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .people-card {
+            border: 1px solid #d0dcf0;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--card-bg);
+        }
+        [data-theme="dark"] .people-card { border-color: #2a3550; }
+        .people-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,64,153,0.15);
+        }
+        .people-card img {
+            width: 75px;
+            height: 75px;
+            border-radius: 4px;
+            margin: 0 auto 6px;
+            border: 2px solid var(--primary);
+            background: #e8f0fc;
+            object-fit: cover;
+        }
+        .people-name { font-weight: bold; color: var(--primary-dark); font-size: 14px; }
+        .people-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary-light);
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 16px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -17px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid var(--primary);
+        }
+        [data-theme="dark"] .timeline-item::before { background: var(--card-bg); }
+        .timeline-item.active::before { background: var(--primary); }
+        .timeline-date {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .timeline-content {
+            font-size: 13px;
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+        .rule-section { margin-bottom: 14px; }
+        .rule-section h4 {
+            color: var(--primary-dark);
+            font-size: 14px;
+            margin-bottom: 6px;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 4px;
+        }
+        .rule-section ul {
+            padding-left: 16px;
+            list-style: disc;
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-main);
+        }
+        .history-volume { margin-bottom: 12px; }
+        .history-chapter {
+            margin: 10px 0;
+            padding-left: 10px;
+            border-left: 2px solid var(--primary-light);
+        }
+        .history-chapter h5 {
+            color: var(--primary-dark);
+            font-size: 13px;
+            margin: 8px 0 4px;
+        }
+        .history-chapter p {
+            font-size: 13px;
+            line-height: 1.8;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            text-indent: 2em;
+        }
+        .history-comment {
+            color: var(--text-secondary);
+            font-style: italic;
+            margin: 8px 0;
+            padding: 8px;
+            background: var(--bg-light);
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .event-card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .event-card {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--card-bg);
+        }
+        .event-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+        .event-card h4 {
+            color: var(--primary-dark);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .event-card p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .mod-timeline {
+            position: relative;
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        .mod-timeline::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary-light);
+        }
+        .mod-item {
+            position: relative;
+            padding-bottom: 12px;
+        }
+        .mod-item::before {
+            content: '';
+            position: absolute;
+            left: -17px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid var(--primary);
+        }
+        [data-theme="dark"] .mod-item::before { background: var(--card-bg); }
+        .mod-date {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        .mod-name {
+            font-size: 13px;
+            color: var(--text-main);
+        }
+        .wiki-catalog {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .wiki-catalog-item {
+            padding: 12px;
+            background: var(--bg-light);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .wiki-catalog-item:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+        .wiki-catalog-item h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .wiki-catalog-item p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .wiki-term {
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--border);
+        }
+        .wiki-term:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .wiki-term h4 {
+            color: var(--primary-dark);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .wiki-term p {
+            font-size: 13px;
+            line-height: 1.7;
+            color: var(--text-main);
+        }
+        .float-catalog {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px 10px;
+            box-shadow: var(--shadow-hover);
+            z-index: 90;
+            max-width: 160px;
+            display: none;
+        }
+        .float-catalog.show { display: block; }
+        .float-catalog h4 {
+            color: var(--primary-dark);
+            font-size: 13px;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+        .float-catalog ul li {
+            padding: 4px 0;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            line-height: 1.4;
+        }
+        .float-catalog ul li:hover,
+        .float-catalog ul li.active {
+            color: var(--primary);
+            padding-left: 4px;
+        }
+        .modal-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            overflow-y: auto;
+        }
+        .modal-mask.show {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-box {
+            width: 100%;
+            max-width: 680px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+        .modal-mask.show .modal-box { transform: scale(1); }
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            border: none;
+            background: #e83e3e;
+            color: #fff;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        .modal-close:hover { background: #c92a2a; }
+        .modal-head {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 14px;
+            align-items: center;
+        }
+        .modal-head img {
+            width: 100px;
+            height: 100px;
+            border-radius: 6px;
+            border: 3px solid var(--primary);
+            background: #e8f0fc;
+            flex-shrink: 0;
+        }
+        .modal-title h3 { font-size: 20px; color: var(--primary-dark); margin-bottom: 4px; }
+        .modal-title p { color: #777; font-size: 13px; }
+        .modal-body { line-height: 1.7; color: var(--text-main); font-size: 14px; }
+        .modal-body h4 {
+            color: var(--primary-dark);
+            margin: 10px 0 6px;
+            font-size: 15px;
+        }
+        .modal-btn {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 8px 20px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+            border: none;
+        }
+        .modal-btn:hover { background: var(--primary-dark); }
+        .modal-btn.disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .back-top {
+            position: fixed;
+            right: 20px;
+            bottom: 30px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 2px 6px #94b7e9;
+            transition: transform 0.2s;
+            z-index: 90;
+        }
+        [data-theme="dark"] .back-top { box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+        .back-top:hover { transform: translateY(-2px); }
+        footer {
+            margin-top: 40px;
+            background: var(--primary-deep);
+            color: #cad6f0;
+            padding: 24px 3%;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+        .loading-placeholder {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-align: center;
+            padding: 20px;
+        }
+        @media screen and (max-width: 768px) {
+            .container { grid-template-columns: 100%; gap:0; }
+            .zone-grid { grid-template-columns: repeat(3,1fr); }
+            .people-grid { grid-template-columns: repeat(2,1fr); }
+            .header-title h1 { font-size: 18px; }
+            .banner-item { font-size: 16px; padding: 0 20px; }
+            .modal-head { flex-direction: column; text-align: center; }
+            .event-card-grid { grid-template-columns: 1fr; }
+            .wiki-catalog { grid-template-columns: 1fr; }
+            .float-catalog { display: none !important; }
+            .hamburger { display: block; }
+            .nav-main {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: var(--primary);
+                flex-direction: column;
+                display: none;
+                padding: 6px 0;
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+            .nav-main.open { display: flex; }
+            .nav-item > a { padding: 12px 20px; }
+            .sub-nav {
+                position: static;
+                width: 100%;
+                box-shadow: none;
+                background: var(--primary-dark);
+                display: none;
+            }
+            .sub-nav li a {
+                color: #c6d8f5;
+                padding-left: 30px;
+            }
+            .nav-item:hover .sub-nav { display: none; }
+            .nav-item.open .sub-nav { display: block; }
+            .nav-search { display: none; }
+            .theme-toggle { display: none; }
+            .top-right a { margin-left: 6px; font-size: 11px; }
+            .scroll-text { font-size: 12px; }
+            .banner-wrap { height: 180px; }
+            .back-top { right: 15px; bottom: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-notice">
+        <div class="scroll-text" id="scrollNoticeText">加载中...</div>
+        <div class="top-right">
+            <a href="#wiki-rule">群规章程</a>
+            <a href="#contact">联络部</a>
+        </div>
+    </div>
+    <div class="header">
+        <div class="logo-box">
+            <img src="logo-qunxi.jpg" alt="雨群官方标志" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjYwIiBoZWlnaHQ9IjYwIiBmaWxsPSIjMDA0MDk5Ii8+PHRleHQgeD0iNTAlIiB5PSI1NSUiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU2ltU3VuIj7pm4DvvJo8L3RleHQ+PC9zdmc+';this.onerror=null;">
+        </div>
+        <div class="header-title">
+            <h1>文明时代2新雨社</h1>
+            <p>雨群官方门户｜MOD交流&文游推演综合社群</p>
+        </div>
+    </div>
+    <nav>
+        <button class="hamburger" id="hamburgerBtn" aria-label="展开菜单">☰</button>
+        <ul class="nav-main" id="navMain">
+            <li class="nav-item active"><a href="#home">首页总览</a></li>
+            <li class="nav-item">
+                <a href="#history">群系沿革</a>
+                <ul class="sub-nav">
+                    <li><a href="#history">草创酸菜时代（2022）</a></li>
+                    <li><a href="#history">鼎盛雨姐政委时代</a></li>
+                    <li><a href="#history">青喧秩序动荡期</a></li>
+                    <li><a href="#history">胡安全新发展时代</a></li>
+                    <li><a href="#timeline">全域重大事件大事记</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#history-hall">历史馆</a>
+                <ul class="sub-nav">
+                    <li><a href="#history-full">编年通史全本</a></li>
+                    <li><a href="#events-special">重大事件专题</a></li>
+                    <li><a href="#people-full">人物全传</a></li>
+                    <li><a href="#mod-timeline">MOD项目年表</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#zones">分区概览</a>
+                <ul class="sub-nav">
+                    <li><a href="#zones">主群一区/二区</a></li>
+                    <li><a href="#zones">三区至九区分区档案</a></li>
+                    <li><a href="#zones">特区：伊派/大明/悦云</a></li>
+                    <li><a href="#zones">综合交流十六区</a></li>
+                    <li><a href="#zones">合并黑龙十三/十四区</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#mod">MOD开发中心</a>
+                <ul class="sub-nav">
+                    <li><a href="#mod">君役天下（开发中）</a></li>
+                    <li><a href="#mod">火燎之路（政策封禁）</a></li>
+                    <li><a href="#mod">雨落兼归（破产项目）</a></li>
+                    <li><a href="#mod">争端渊源独立模组</a></li>
+                    <li><a href="#mod">模组开发招募公告</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#people">人物列传</a>
+                <ul class="sub-nav">
+                    <li><a href="#people">代总群主：胡安</a></li>
+                    <li><a href="#people">总管：游客</a></li>
+                    <li><a href="#people">前内务总长：青喧</a></li>
+                    <li><a href="#people">荣誉总群主：雨姐</a></li>
+                    <li><a href="#people">核心成员列传</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a href="#wiki">社群百科</a>
+                <ul class="sub-nav">
+                    <li><a href="#wiki-base">基础概念词条</a></li>
+                    <li><a href="#wiki-org">组织架构详解</a></li>
+                    <li><a href="#wiki-rule">规章制度全集</a></li>
+                    <li><a href="#faq">常见问答</a></li>
+                </ul>
+            </li>
+            <li class="nav-item"><a href="#wiki-rule">群务规章</a></li>
+            <li class="nav-item"><a href="#contact">对外合作</a></li>
+        </ul>
+        <div class="nav-search">
+            <input type="text" id="searchInput" placeholder="搜索公告/人物/事件/分区/百科" autocomplete="off">
+            <div class="search-result" id="searchResult"></div>
+            <button class="theme-toggle" id="themeToggle" aria-label="切换主题">☾</button>
+        </div>
+    </nav>
+    <div class="banner-wrap" id="home">
+        <div class="banner-list" id="bannerBox"></div>
+        <button class="banner-btn prev" id="prevBtn" aria-label="上一张">&lt;</button>
+        <button class="banner-btn next" id="nextBtn" aria-label="下一张">&gt;</button>
+        <div class="banner-dots" id="bannerDots"></div>
+    </div>
+    <div class="float-catalog" id="floatCatalog">
+        <h4>页面导航</h4>
+        <ul id="catalogList">
+            <li data-target="home">首页总览</li>
+            <li data-target="notice">群务公告</li>
+            <li data-target="timeline">编年时间线</li>
+            <li data-target="history-hall">社群历史馆</li>
+            <li data-target="mod">MOD开发中心</li>
+            <li data-target="wiki">社群百科</li>
+            <li data-target="wiki-rule">群务规章</li>
+            <li data-target="people">核心人物</li>
+            <li data-target="zones">分区入口</li>
+        </ul>
+    </div>
+    <div class="container" id="mainContainer">
+        <div class="left-main">
+            <div class="card" id="notice">
+                <h2>群务司最新全域公告</h2>
+                <ul class="news-list" id="newsList">
+                    <li class="loading-placeholder">加载中...</li>
+                </ul>
+            </div>
+            <div class="card" id="timeline">
+                <h2 id="history">社群历史编年时间线</h2>
+                <div class="timeline" id="timelineBox">
+                    <div class="loading-placeholder">加载中...</div>
+                </div>
+            </div>
+            <div class="card" id="history-hall">
+                <h2>社群历史馆 · 全本史料</h2>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;line-height:1.6;">
+                    收录《雨群编年体发展史（增广版V1.41）》完整原文，按原始卷次整理，保留全部史料细节与史论批注。
+                </p>
+                <div id="history-full">
+                    <h3 style="font-size:15px;color:var(--primary-dark);margin:10px 0 8px;border-bottom:1px solid var(--border);padding-bottom:6px;">一、编年通史全本</h3>
+                    <div id="historyVolumesBox"></div>
+                </div>
+                <div id="events-special" style="margin-top:20px;">
+                    <h3 style="font-size:15px;color:var(--primary-dark);margin:10px 0 8px;border-bottom:1px solid var(--border);padding-bottom:6px;">二、重大事件专题</h3>
+                    <div class="event-card-grid" id="eventsBox"></div>
+                </div>
+                <div id="mod-timeline" style="margin-top:20px;">
+                    <h3 style="font-size:15px;color:var(--primary-dark);margin:10px 0 8px;border-bottom:1px solid var(--border);padding-bottom:6px;">三、MOD项目年表</h3>
+                    <div class="mod-timeline" id="modTimelineBox"></div>
+                </div>
+            </div>
+            <div class="card" id="mod">
+                <h2>MOD工程开发中心项目公示</h2>
+                <ul class="news-list" id="modListBox">
+                    <li class="loading-placeholder">加载中...</li>
+                </ul>
+            </div>
+            <div class="card" id="wiki">
+                <h2>社群百科 · 知识库</h2>
+                <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;line-height:1.6;">
+                    整合社群问答与规章制度，系统梳理基础概念、组织架构与专有名词，便于新老成员快速查阅。
+                </p>
+                <div class="wiki-catalog">
+                    <div class="wiki-catalog-item" data-wiki="base">
+                        <h4>基础概念词条</h4>
+                        <p>雨群、新雨社、青派、保员派等核心概念</p>
+                    </div>
+                    <div class="wiki-catalog-item" data-wiki="org">
+                        <h4>组织架构详解</h4>
+                        <p>职务体系、部门职能、晋升路径说明</p>
+                    </div>
+                    <div class="wiki-catalog-item" data-wiki="rule">
+                        <h4>规章制度全集</h4>
+                        <p>雨群联合社区活动准则完整文本</p>
+                    </div>
+                </div>
+                <div id="wikiContentBox" style="margin-top:16px;"></div>
+            </div>
+            <div class="card" id="faq">
+                <h2>社群常见问题解答</h2>
+                <div id="faqBox"></div>
+            </div>
+        </div>
+        <div class="right-side">
+            <div class="card" id="people">
+                <h2>核心管理层人物 <button class="collapse-btn" id="sideCollapseBtn">收起侧边</button></h2>
+                <div class="people-grid" id="corePeopleBox"></div>
+            </div>
+            <div class="card" id="people-staff">
+                <h2>骨干管理团队</h2>
+                <div class="people-grid" id="staffPeopleBox"></div>
+            </div>
+            <div class="card" id="zones">
+                <h2>雨群分区快速入口</h2>
+                <div class="zone-grid" id="zonesBox"></div>
+            </div>
+            <div class="card" id="contact">
+                <h2>对外联络与合作</h2>
+                <ul class="news-list">
+                    <li><a href="#">跨社群模组联合开发对接</a></li>
+                    <li><a href="#">友好社群联盟入驻申请</a></li>
+                    <li><a href="#">问题反馈与违规举报通道</a></li>
+                    <li><a href="#">MOD作者入驻与资源合作</a></li>
+                    <li>联络部邮箱（青城司管辖）：hsu397707@gmail.com</li>
+                    <li><a href="https://hstv-dvx.pages.dev/" target="_blank">胡说TV娱乐频道（已搁置）</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="modal-mask" id="commonModal" role="dialog" aria-modal="true">
+        <div class="modal-box">
+            <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
+            <div class="modal-head" id="modalHead">
+                <img id="modalImg" src="" alt="详情配图" onerror="this.style.background='#ccc'">
+                <div class="modal-title">
+                    <h3 id="modalName">标题</h3>
+                    <p id="modalPost">副标题</p>
+                </div>
+            </div>
+            <div class="modal-body" id="modalText"></div>
+            <button class="modal-btn" id="modalActionBtn">立即加群</button>
+        </div>
+    </div>
+    <button class="back-top" id="backTopBtn" aria-label="返回顶部">↑</button>
+    <footer id="footerBox">
+        <p>加载中...</p>
+    </footer>
+
+    <script>
+        const appData = {
+            site: {},
+            banner: [],
+            news: [],
+            timeline: [],
+            people: {},
+            zones: {},
+            events: {},
+            modList: [],
+            modTimeline: [],
+            wiki: {},
+            faq: [],
+            historyVolumes: []
+        };
+
+        function throttle(fn, delay = 100) {
+            let lastTime = 0;
+            return function(...args) {
+                const now = Date.now();
+                if (now - lastTime >= delay) {
+                    lastTime = now;
+                    fn.apply(this, args);
+                }
+            }
+        }
+
+        async function loadAllData() {
+            try {
+                const [
+                    siteRes, bannerRes, newsRes, timelineRes,
+                    peopleRes, zonesRes, eventsRes, modListRes,
+                    modTimelineRes, wikiRes, faqRes, historyRes
+                ] = await Promise.all([
+                    fetch('data/site.json'),
+                    fetch('data/banner.json'),
+                    fetch('data/news.json'),
+                    fetch('data/timeline.json'),
+                    fetch('data/people.json'),
+                    fetch('data/zones.json'),
+                    fetch('data/events.json'),
+                    fetch('data/mod-list.json'),
+                    fetch('data/mod-timeline.json'),
+                    fetch('data/wiki.json'),
+                    fetch('data/faq.json'),
+                    fetch('data/history-volumes.json')
+                ]);
+
+                appData.site = await siteRes.json();
+                appData.banner = (await bannerRes.json()).items;
+                appData.news = (await newsRes.json()).items;
+                appData.timeline = (await timelineRes.json()).items;
+                appData.people = await peopleRes.json();
+                appData.zones = await zonesRes.json();
+                appData.events = await eventsRes.json();
+                appData.modList = (await modListRes.json()).items;
+                appData.modTimeline = (await modTimelineRes.json()).items;
+                appData.wiki = await wikiRes.json();
+                appData.faq = (await faqRes.json()).items;
+                appData.historyVolumes = (await historyRes.json()).items;
+
+                renderAll();
+                initPage();
+            } catch (err) {
+                console.error('数据加载失败，请使用Live Server打开：', err);
+                document.querySelectorAll('.loading-placeholder').forEach(el => {
+                    el.innerText = '数据加载失败，请使用本地服务器打开页面';
+                });
+            }
+        }
+
+        function renderAll() {
+            renderScrollNotice();
+            renderFooter();
+            renderBanner();
+            renderNews();
+            renderTimeline();
+            renderHistoryVolumes();
+            renderEvents();
+            renderModTimeline();
+            renderModList();
+            renderWiki('base');
+            renderFaq();
+            renderCorePeople();
+            renderStaffPeople();
+            renderZones();
+        }
+
+        function renderScrollNotice() {
+            document.getElementById('scrollNoticeText').innerText = appData.site.scrollNotice;
+        }
+
+        function renderFooter() {
+            const s = appData.site;
+            document.getElementById('footerBox').innerHTML = `
+                <p>${s.copyright} | 社群总登记人数：${s.totalMembers}人</p>
+                <p>全域总负责人：总管「${s.chiefManager}」；代总群主：${s.actingLeader} |</p>
+                <p>档案编纂：${s.compilers}</p>
+                <p>参考资料：${s.references}</p>
+                <p>社群备案编号：${s.recordNumber} | 本门户仅供社群内部查阅历史、群务公告、模组资源公示</p>
+                <p>技术维护：${s.maintainer}</p>
+            `;
+        }
+
+        function renderBanner() {
+            const box = document.getElementById('bannerBox');
+            box.innerHTML = appData.banner.map(item => {
+                if (item.type === 'image') {
+                    return `<div class="banner-item img-banner"><img src="${item.src}" alt="${item.alt || ''}"></div>`;
+                }
+                return `<div class="banner-item">${item.text}</div>`;
+            }).join('');
+        }
+
+        function renderNews() {
+            document.getElementById('newsList').innerHTML = appData.news.map(item => `
+                <li><a href="#">${item.name}</a><span class="date-tag">${item.date}</span></li>
+            `).join('');
+        }
+
+        function renderTimeline() {
+            document.getElementById('timelineBox').innerHTML = appData.timeline.map(item => `
+                <div class="timeline-item ${item.active ? 'active' : ''}">
+                    <div class="timeline-date">${item.date}</div>
+                    <div class="timeline-content">${item.content}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderHistoryVolumes() {
+            document.getElementById('historyVolumesBox').innerHTML = appData.historyVolumes.map((vol, index) => `
+                <div class="collapse-panel">
+                    <div class="panel-head" data-panel="full-vol${index+1}">
+                        <span>${vol.title}</span>
+                        <span class="arrow">▶</span>
+                    </div>
+                    <div class="panel-body" id="full-vol${index+1}">
+                        <div class="history-volume">${vol.content}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderEvents() {
+            document.getElementById('eventsBox').innerHTML = Object.entries(appData.events).map(([key, item]) => `
+                <div class="event-card" data-event="${key}">
+                    <h4>${item.name}</h4>
+                    <p>${item.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderModTimeline() {
+            document.getElementById('modTimelineBox').innerHTML = appData.modTimeline.map(item => `
+                <div class="mod-item">
+                    <div class="mod-date">${item.date}</div>
+                    <div class="mod-name">${item.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderModList() {
+            document.getElementById('modListBox').innerHTML = appData.modList.map(item => `
+                <li><a href="#">${item.name}</a><span class="date-tag">${item.status}</span></li>
+            `).join('');
+        }
+
+        function renderWiki(type) {
+            const data = appData.wiki[type] || [];
+            const titleMap = {
+                base: '基础概念词条',
+                org: '组织架构详解',
+                rule: '雨群联合社区活动准则（1号修正案）'
+            };
+            document.getElementById('wikiContentBox').innerHTML = `
+                <h3 style="font-size:15px;color:var(--primary-dark);margin:10px 0 8px;border-bottom:1px solid var(--border);padding-bottom:6px;">${titleMap[type]}</h3>
+                ${type === 'rule' ? data.html : data.map(item => `
+                    <div class="wiki-term">
+                        <h4>${item.name}</h4>
+                        <p>${item.desc}</p>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        function renderFaq() {
+            document.getElementById('faqBox').innerHTML = appData.faq.map((item, index) => `
+                <div class="collapse-panel">
+                    <div class="panel-head" data-panel="faq${index+1}">
+                        <span>${item.question}</span>
+                        <span class="arrow">▶</span>
+                    </div>
+                    <div class="panel-body" id="faq${index+1}">${item.answer}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderCorePeople() {
+            const coreKeys = ['juan', 'youke', 'qingxuan', 'yujie'];
+            document.getElementById('corePeopleBox').innerHTML = coreKeys.map(key => `
+                <div class="people-card" data-id="${key}">
+                    <img src="${appData.people[key].img}" alt="${appData.people[key].name}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzUiIGhlaWdodD0iNzUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9Ijc1IiBoZWlnaHQ9Ijc1IiBmaWxsPSIjZThmMGZjIi8+PHRleHQgeD0iNTAlIiB5PSI1NSUiIGZvbnQtc2l6ZT0iMjgiIGZpbGw9IiMwMDQwOTkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU2ltU3VuIj7lvII8L3RleHQ+PC9zdmc+';this.onerror=null;">
+                    <div class="people-name">${appData.people[key].name}</div>
+                    <div class="people-desc">${appData.people[key].post}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderStaffPeople() {
+            const staffKeys = ['suan_cai', 'xiaoyu', 'ermiao', 'keng', 'wu', 'lubai', 'lanmao', 'hutao', 'yu', 'zhou_tianzi'];
+            document.getElementById('staffPeopleBox').innerHTML = staffKeys.map(key => `
+                <div class="people-card" data-id="${key}">
+                    <img src="${appData.people[key].img}" alt="${appData.people[key].name}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzUiIGhlaWdodD0iNzUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9Ijc1IiBoZWlnaHQ9Ijc1IiBmaWxsPSIjZThmMGZjIi8+PHRleHQgeD0iNTAlIiB5PSI1NSUiIGZvbnQtc2l6ZT0iMjgiIGZpbGw9IiMwMDQwOTkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iU2ltU3VuIj7pm4DvvJo8L3RleHQ+PC9zdmc+';this.onerror=null;">
+                    <div class="people-name">${appData.people[key].name}</div>
+                    <div class="people-desc">${appData.people[key].post}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderZones() {
+            const zoneOrder = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','qcs','qws','ziyou'];
+            document.getElementById('zonesBox').innerHTML = zoneOrder.map(key => {
+                const z = appData.zones[key];
+                const statusClass = z.status === 'open' ? '' : z.status;
+                return `<div class="zone-item ${statusClass}" data-zone="${key}">${z.name.replace(/（.*）/g, '')}<br>${z.desc}</div>`;
+            }).join('');
+        }
+
+        function initPage() {
+            initSideCollapse();
+            initBanner();
+            initCollapsePanels();
+            initWikiCatalog();
+            initModal();
+            initHamburger();
+            initBackTop();
+            initNavScroll();
+            initSearch();
+            initThemeToggle();
+            initHashAnchor();
+        }
+
+        function initSideCollapse() {
+            const mainContainer = document.getElementById('mainContainer');
+            const sideCollapseBtn = document.getElementById('sideCollapseBtn');
+            let sideStatus = true;
+            sideCollapseBtn.addEventListener('click', () => {
+                sideStatus = !sideStatus;
+                if (sideStatus) {
+                    mainContainer.classList.remove('collapse-side');
+                    sideCollapseBtn.innerText = "收起侧边";
+                } else {
+                    mainContainer.classList.add('collapse-side');
+                    sideCollapseBtn.innerText = "展开侧边";
+                }
+            })
+        }
+
+        function initBanner() {
+            const bannerBox = document.getElementById('bannerBox');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const dotsBox = document.getElementById('bannerDots');
+            let bannerIndex = 0;
+            const bannerTotal = appData.banner.length;
+            let bannerTimer = null;
+
+            dotsBox.innerHTML = '';
+            for (let i = 0; i < bannerTotal; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'banner-dot' + (i === 0 ? ' active' : '');
+                dot.addEventListener('click', () => {
+                    bannerIndex = i;
+                    updateBanner();
+                });
+                dotsBox.appendChild(dot);
+            }
+            const dots = document.querySelectorAll('.banner-dot');
+
+            function updateBanner() {
+                bannerBox.style.transform = `translateX(-${bannerIndex * 100}%)`;
+                dots.forEach((dot, idx) => {
+                    dot.classList.toggle('active', idx === bannerIndex);
+                });
+            }
+            function startBannerTimer() {
+                stopBannerTimer();
+                bannerTimer = setInterval(() => {
+                    bannerIndex = (bannerIndex + 1) % bannerTotal;
+                    updateBanner();
+                }, 5000);
+            }
+            function stopBannerTimer() {
+                if (bannerTimer) clearInterval(bannerTimer);
+            }
+            startBannerTimer();
+
+            document.querySelector('.banner-wrap').addEventListener('mouseenter', stopBannerTimer);
+            document.querySelector('.banner-wrap').addEventListener('mouseleave', startBannerTimer);
+            document.addEventListener('visibilitychange', () => {
+                document.hidden ? stopBannerTimer() : startBannerTimer();
+            });
+
+            prevBtn.addEventListener('click', () => {
+                bannerIndex = (bannerIndex - 1 + bannerTotal) % bannerTotal;
+                updateBanner();
+            })
+            nextBtn.addEventListener('click', () => {
+                bannerIndex = (bannerIndex + 1) % bannerTotal;
+                updateBanner();
+            })
+
+            let touchStartX = 0;
+            let touchEndX = 0;
+            const bannerWrap = document.querySelector('.banner-wrap');
+            bannerWrap.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                stopBannerTimer();
+            }, { passive: true });
+            bannerWrap.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchStartX - touchEndX;
+                if (Math.abs(diff) > 50) {
+                    diff > 0 ? bannerIndex = (bannerIndex + 1) % bannerTotal : bannerIndex = (bannerIndex - 1 + bannerTotal) % bannerTotal;
+                    updateBanner();
+                }
+                startBannerTimer();
+            }, { passive: true });
+        }
+
+        function initCollapsePanels() {
+            document.querySelectorAll('.panel-head').forEach(head => {
+                head.addEventListener('click', () => {
+                    const panelId = head.dataset.panel;
+                    const body = document.getElementById(panelId);
+                    head.classList.toggle('open');
+                    body.classList.toggle('open');
+                })
+            })
+        }
+
+        function initWikiCatalog() {
+            document.querySelectorAll('.wiki-catalog-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const type = item.dataset.wiki;
+                    renderWiki(type);
+                })
+            })
+        }
+
+        function initModal() {
+            const modal = document.getElementById('commonModal');
+            const modalImg = document.getElementById('modalImg');
+            const modalName = document.getElementById('modalName');
+            const modalPost = document.getElementById('modalPost');
+            const modalText = document.getElementById('modalText');
+            const modalClose = document.getElementById('modalClose');
+            const modalHead = document.getElementById('modalHead');
+            const modalActionBtn = document.getElementById('modalActionBtn');
+            let lastFocus = null;
+
+            function openModal(data, showImg = true) {
+                lastFocus = document.activeElement;
+                modalHead.style.display = showImg ? 'flex' : 'none';
+                if (showImg) modalImg.src = data.img;
+                modalName.innerText = data.name;
+                modalPost.innerText = data.post || data.desc || '';
+                modalText.innerHTML = data.text || data.detail || '';
+                
+                if (data.status === 'open' && data.url) {
+                    modalActionBtn.classList.remove('disabled');
+                    modalActionBtn.innerText = '立即加群';
+                    modalActionBtn.style.display = 'inline-block';
+                    modalActionBtn.onclick = () => window.open(data.url, '_blank');
+                } else if (data.status === 'disabled') {
+                    modalActionBtn.classList.add('disabled');
+                    modalActionBtn.innerText = '暂不开放';
+                    modalActionBtn.style.display = 'inline-block';
+                    modalActionBtn.onclick = null;
+                } else if (data.status === 'canceled') {
+                    modalActionBtn.classList.add('disabled');
+                    modalActionBtn.innerText = '已取消编号';
+                    modalActionBtn.style.display = 'inline-block';
+                    modalActionBtn.onclick = null;
+                } else if (data.status === 'banned') {
+                    modalActionBtn.classList.add('disabled');
+                    modalActionBtn.innerText = '已封禁';
+                    modalActionBtn.style.display = 'inline-block';
+                    modalActionBtn.onclick = null;
+                } else {
+                    modalActionBtn.style.display = 'none';
+                }
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+                modalClose.focus();
+            }
+
+            function closeModal() {
+                modal.classList.remove('show');
+                document.body.style.overflow = '';
+                if (lastFocus) lastFocus.focus();
+            }
+
+            document.querySelectorAll('.people-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = card.dataset.id;
+                    openModal(appData.people[id], true);
+                })
+            })
+            document.querySelectorAll('.zone-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const id = item.dataset.zone;
+                    openModal(appData.zones[id], false);
+                })
+            })
+            document.querySelectorAll('.event-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const id = card.dataset.event;
+                    openModal(appData.events[id], false);
+                })
+            })
+
+            modalClose.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); })
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+            })
+        }
+
+        function initHamburger() {
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const navMain = document.getElementById('navMain');
+            hamburgerBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navMain.classList.toggle('open');
+            })
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768 && item.querySelector('.sub-nav')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        item.classList.toggle('open');
+                    }
+                })
+            })
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && !navMain.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                    navMain.classList.remove('open');
+                }
+            })
+        }
+
+        function initBackTop() {
+            const backTopBtn = document.getElementById('backTopBtn');
+            window.addEventListener('scroll', throttle(() => {
+                backTopBtn.style.display = window.scrollY > 400 ? "block" : "none";
+            }, 100))
+            backTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: "smooth" })
+            })
+        }
+
+        function initNavScroll() {
+            const navItems = document.querySelectorAll('.nav-item');
+            const sections = document.querySelectorAll('[id]');
+            const floatCatalog = document.getElementById('floatCatalog');
+            const catalogItems = document.querySelectorAll('#catalogList li');
+
+            const updateActive = throttle(() => {
+                let current = 'home';
+                const scrollTop = window.scrollY;
+                
+                if (scrollTop > 300 && window.innerWidth > 1024) {
+                    floatCatalog.classList.add('show');
+                } else {
+                    floatCatalog.classList.remove('show');
+                }
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - 100;
+                    if (scrollTop >= sectionTop) {
+                        current = section.getAttribute('id');
+                    }
+                })
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    const href = item.querySelector('a').getAttribute('href');
+                    if (href === '#' + current) item.classList.add('active');
+                })
+                catalogItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.dataset.target === current) item.classList.add('active');
+                })
+            }, 100);
+
+            window.addEventListener('scroll', updateActive);
+            catalogItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    document.getElementById(item.dataset.target).scrollIntoView({ behavior: 'smooth' });
+                })
+            })
+            updateActive();
+        }
+
+        function initSearch() {
+            const searchInput = document.getElementById('searchInput');
+            const searchResult = document.getElementById('searchResult');
+
+            function renderSearchResults(keyword) {
+                if (!keyword.trim()) {
+                    searchResult.classList.remove('show');
+                    return;
+                }
+                keyword = keyword.trim();
+                let html = '';
+
+                let personMatch = [];
+                for (const key in appData.people) {
+                    const p = appData.people[key];
+                    if (p.name.includes(keyword) || p.post.includes(keyword)) {
+                        personMatch.push({ key, ...p });
+                    }
+                }
+                if (personMatch.length > 0) {
+                    html += '<div class="search-group">人物</div>';
+                    personMatch.forEach(p => {
+                        html += `<div class="search-item" data-type="person" data-key="${p.key}">${p.name} · ${p.post}</div>`;
+                    });
+                }
+
+                let zoneMatch = [];
+                for (const key in appData.zones) {
+                    const z = appData.zones[key];
+                    if (z.name.includes(keyword) || z.fullName.includes(keyword)) {
+                        zoneMatch.push({ key, ...z });
+                    }
+                }
+                if (zoneMatch.length > 0) {
+                    html += '<div class="search-group">分区</div>';
+                    zoneMatch.forEach(z => {
+                        html += `<div class="search-item" data-type="zone" data-key="${z.key}">${z.name}</div>`;
+                    });
+                }
+
+                let eventMatch = [];
+                for (const key in appData.events) {
+                    const e = appData.events[key];
+                    if (e.name.includes(keyword) || e.text.includes(keyword)) {
+                        eventMatch.push({ key, ...e });
+                    }
+                }
+                if (eventMatch.length > 0) {
+                    html += '<div class="search-group">历史事件</div>';
+                    eventMatch.forEach(e => {
+                        html += `<div class="search-item" data-type="event" data-key="${e.key}">${e.name}</div>`;
+                    });
+                }
+
+                let wikiMatch = [];
+                ['base', 'org'].forEach(type => {
+                    appData.wiki[type].forEach(w => {
+                        if (w.name.includes(keyword) || w.desc.includes(keyword)) {
+                            wikiMatch.push(w);
+                        }
+                    })
+                })
+                if (wikiMatch.length > 0) {
+                    html += '<div class="search-group">百科词条</div>';
+                    wikiMatch.forEach(w => {
+                        html += `<div class="search-item" data-type="wiki" data-name="${w.name}">${w.name} · ${w.desc}</div>`;
+                    });
+                }
+
+                let newsMatch = appData.news.filter(n => n.name.includes(keyword));
+                if (newsMatch.length > 0) {
+                    html += '<div class="search-group">公告</div>';
+                    newsMatch.forEach(n => {
+                        html += `<div class="search-item" data-type="news" data-name="${n.name}">${n.name}</div>`;
+                    });
+                }
+
+                if (!html) html = '<div class="search-empty">未找到相关内容</div>';
+                searchResult.innerHTML = html;
+                searchResult.classList.add('show');
+
+                searchResult.querySelectorAll('.search-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const type = item.dataset.type;
+                        const key = item.dataset.key;
+                        searchResult.classList.remove('show');
+                        searchInput.value = '';
+                        if (type === 'person') {
+                            const modalImg = document.getElementById('modalImg');
+                            const modalName = document.getElementById('modalName');
+                            const modalPost = document.getElementById('modalPost');
+                            const modalText = document.getElementById('modalText');
+                            const modal = document.getElementById('commonModal');
+                            const modalActionBtn = document.getElementById('modalActionBtn');
+                            const modalHead = document.getElementById('modalHead');
+                            modalHead.style.display = 'flex';
+                            modalImg.src = appData.people[key].img;
+                            modalName.innerText = appData.people[key].name;
+                            modalPost.innerText = appData.people[key].post;
+                            modalText.innerHTML = appData.people[key].text;
+                            modalActionBtn.style.display = 'none';
+                            modal.classList.add('show');
+                            document.body.style.overflow = 'hidden';
+                        } else if (type === 'zone') {
+                            const modalName = document.getElementById('modalName');
+                            const modalPost = document.getElementById('modalPost');
+                            const modalText = document.getElementById('modalText');
+                            const modal = document.getElementById('commonModal');
+                            const modalActionBtn = document.getElementById('modalActionBtn');
+                            const modalHead = document.getElementById('modalHead');
+                            const data = appData.zones[key];
+                            modalHead.style.display = 'none';
+                            modalName.innerText = data.name;
+                            modalPost.innerText = data.desc;
+                            modalText.innerHTML = data.detail;
+                            if (data.status === 'open' && data.url) {
+                                modalActionBtn.classList.remove('disabled');
+                                modalActionBtn.innerText = '立即加群';
+                                modalActionBtn.style.display = 'inline-block';
+                                modalActionBtn.onclick = () => window.open(data.url, '_blank');
+                            } else {
+                                modalActionBtn.classList.add('disabled');
+                                modalActionBtn.innerText = data.status === 'disabled' ? '暂不开放' : data.status === 'canceled' ? '已取消编号' : '已封禁';
+                                modalActionBtn.style.display = 'inline-block';
+                                modalActionBtn.onclick = null;
+                            }
+                            modal.classList.add('show');
+                            document.body.style.overflow = 'hidden';
+                        } else if (type === 'event') {
+                            document.getElementById('events-special').scrollIntoView({ behavior: 'smooth' });
+                        } else if (type === 'wiki') {
+                            document.getElementById('wiki').scrollIntoView({ behavior: 'smooth' });
+                        } else if (type === 'news') {
+                            document.getElementById('notice').scrollIntoView({ behavior: 'smooth' });
+                        }
+                    })
+                })
+            }
+
+            searchInput.addEventListener('input', (e) => renderSearchResults(e.target.value));
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchResult.contains(e.target)) {
+                    searchResult.classList.remove('show');
+                }
+            })
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const firstItem = searchResult.querySelector('.search-item');
+                    if (firstItem) firstItem.click();
+                }
+            })
+        }
+
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            themeToggle.innerText = savedTheme === 'dark' ? '☼' : '☾';
+            themeToggle.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme');
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+                themeToggle.innerText = next === 'dark' ? '☼' : '☾';
+            })
+        }
+
+        function initHashAnchor() {
+            const hash = window.location.hash.slice(1);
+            if (hash && document.getElementById(hash)) {
+                setTimeout(() => {
+                    document.getElementById(hash).scrollIntoView({ behavior: 'smooth' });
+                }, 300);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadAllData);
+    </script>
+</body>
+</html>
