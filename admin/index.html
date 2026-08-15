@@ -1,25 +1,26 @@
-backend:
-  name: github
-  repo: suqingyan22814/xinyushe-official
-  branch: main
-  site_domain: xinyushe.pages.dev
-
-site_url: https://xinyushe.pages.dev
-media_folder: static/uploads
-public_folder: /static/uploads
-locale: zh_CN
-
-collections:
-  - name: news
-    label: 测试-公告列表
-    file: data/news.json
-    format: json
-    editor:
-      preview: false
-    fields:
-      - label: 公告列表
-        name: items
-        widget: list
-        fields:
-          - { label: 标题, name: name, widget: string }
-          - { label: 日期, name: date, widget: string }
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新雨社门户 - 内容管理后台</title>
+    <!-- 换用 cdnjs 源，国内访问稳定性更高 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/decap-cms/3.1.1/decap-cms.min.js"></script>
+</head>
+<body>
+    <div id="nc-root"></div>
+    <script>
+        // 确保资源完全加载后再初始化
+        window.addEventListener('load', function() {
+            if (window.CMS) {
+                window.CMS_MANUAL_INIT = true;
+                window.CMS.init({
+                    config_url: "/admin/config.yml"
+                });
+            } else {
+                document.body.innerText = "后台脚本加载失败，请刷新重试或检查网络";
+            }
+        });
+    </script>
+</body>
+</html>
