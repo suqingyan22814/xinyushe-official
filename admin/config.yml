@@ -86,7 +86,7 @@ collections:
     editor:
       preview: false
     fields:
-      - label: 核心人物
+      - label: 胡安
         name: juan
         widget: object
         fields:
@@ -122,6 +122,96 @@ collections:
           - { label: 职务头衔, name: post, widget: string }
           - { label: 详细履历, name: text, widget: textarea }
           - { label: 是否显示按钮, name: hasAction, widget: boolean }
+      - label: 酸菜
+        name: suan_cai
+        widget: object
+        fields:
+          - { label: 头像路径, name: img, widget: string }
+          - { label: 人物全名, name: name, widget: string }
+          - { label: 职务头衔, name: post, widget: string }
+          - { label: 详细履历, name: text, widget: textarea }
+          - { label: 是否显示按钮, name: hasAction, widget: boolean }
+      - label: 小雨
+        name: xiaoyu
+        widget: object
+        fields:
+          - { label: 头像路径, name: img, widget: string }
+          - { label: 人物全名, name: name, widget: string }
+          - { label: 职务头衔, name: post, widget: string }
+          - { label: 详细履历, name: text, widget: textarea }
+          - { label: 是否显示按钮, name: hasAction, widget: boolean }
+      - label: 二喵
+        name: ermiao
+        widget: object
+        fields:
+          - { label: 头像路径, name: img, widget: string }
+          - { label: 人物全名, name: name, widget: string }
+          - { label: 职务头衔, name: post, widget: string }
+          - { label: 详细履历, name: text, widget: textarea }
+          - { label: 是否显示按钮, name: hasAction, widget: boolean }
+      - label: 坑
+        name: keng
+        widget: object
+        fields:
+          - { label: 头像路径, name: img, widget: string }
+          - { label: 人物全名, name: name, widget: string }
+          - { label: 职务头衔, name: post, widget: string }
+          - { label: 详细履历, name: text, widget: textarea }
+          - { label: 是否显示按钮, name: hasAction, widget: boolean }
+      - label: 梧
+        name: wu
+        widget: object
+        fields:
+          - { label: 头像路径, name: img, widget: string }
+          - { label: 人物全名, name: name, widget: string }
+          - { label: 职务头衔, name: post, widget: string }
+          - { label: 详细履历, name: text, widget: textarea }
+          - { label: 是否显示按钮, name: hasAction, widget: boolean }
+      - label: 露白
+        name: lubai
+        widget: object
+        fields:
+          - { label: 头像路径, name: img, widget: string }
+          - { label: 人物全名, name: name, widget: string }
+          - { label: 职务头衔, name: post, widget: string }
+          - { label: 详细履历, name: text, widget: textarea }
+          - { label: 是否显示按钮, name: hasAction, widget: boolean }
+      - label: 蓝猫
+        name: lanmao
+        widget: object
+        fields:
+          - { label: 头像路径, name: img, widget: string }
+          - { label: 人物全名, name: name, widget: string }
+          - { label: 职务头衔, name: post, widget: string }
+          - { label: 详细履历, name: text, widget: textarea }
+          - { label: 是否显示按钮, name: hasAction, widget: boolean }
+      - label: 胡桃
+        name: hutao
+        widget: object
+        fields:
+          - { label: 头像路径, name: img, widget: string }
+          - { label: 人物全名, name: name, widget: string }
+          - { label: 职务头衔, name: post, widget: string }
+          - { label: 详细履历, name: text, widget: textarea }
+          - { label: 是否显示按钮, name: hasAction, widget: boolean }
+      - label: 禹
+        name: yu
+        widget: object
+        fields:
+          - { label: 头像路径, name: img, widget: string }
+          - { label: 人物全名, name: name, widget: string }
+          - { label: 职务头衔, name: post, widget: string }
+          - { label: 详细履历, name: text, widget: textarea }
+          - { label: 是否显示按钮, name: hasAction, widget: boolean }
+      - label: 周天子
+        name: zhou_tianzi
+        widget: object
+        fields:
+          - { label: 头像路径, name: img, widget: string }
+          - { label: 人物全名, name: name, widget: string }
+          - { label: 职务头衔, name: post, widget: string }
+          - { label: 详细履历, name: text, widget: textarea }
+          - { label: 是否显示按钮, name: hasAction, widget: boolean }
 
   - name: zones
     label: 雨群分区数据
@@ -142,6 +232,186 @@ collections:
           - { label: 分区详情, name: detail, widget: textarea }
       - label: 二区
         name: "2"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 三区
+        name: "3"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 四区
+        name: "4"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 五区
+        name: "5"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 六区
+        name: "6"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 七区
+        name: "7"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 八区
+        name: "8"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 九区
+        name: "9"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 十区
+        name: "10"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 十一区
+        name: "11"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 十二区
+        name: "12"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 十三区
+        name: "13"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 十四区
+        name: "14"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 十五区
+        name: "15"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 十六区
+        name: "16"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 十七区
+        name: "17"
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 青城司
+        name: qcs
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 群务司
+        name: qws
+        widget: object
+        fields:
+          - { label: 分区简称, name: name, widget: string }
+          - { label: 完整群名, name: fullName, widget: string }
+          - { label: 简短描述, name: desc, widget: string }
+          - { label: 状态, name: status, widget: select, options: ["open", "disabled", "canceled", "banned"] }
+          - { label: 加群链接, name: url, widget: string, required: false }
+          - { label: 分区详情, name: detail, widget: textarea }
+      - label: 自由区
+        name: ziyou
         widget: object
         fields:
           - { label: 分区简称, name: name, widget: string }
