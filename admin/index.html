@@ -4,26 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>新雨社门户 - 内容管理后台</title>
-    <!-- 必须在加载CMS脚本前开启手动初始化，防止自动初始化报错 -->
+    <!-- 加载脚本前强制开启手动初始化，禁用自动OAuth跳转 -->
     <script>
         window.CMS_MANUAL_INIT = true;
+        window.CMS_DISABLE_NETLIFY_AUTH = true;
     </script>
-    <!-- 加载Decap CMS主脚本，使用unpkg稳定源 -->
     <script src="https://unpkg.com/decap-cms@3.1.1/dist/decap-cms.js"></script>
 </head>
 <body>
     <div id="nc-root"></div>
     <script>
-        // 页面资源完全加载后再初始化，避免DOM异常
         window.addEventListener('load', function() {
             if (!window.CMS) {
                 document.body.innerText = "后台脚本加载失败，请刷新重试或检查网络";
                 return;
             }
-
-            // 初始化CMS，指定配置文件路径
+            // 强制使用配置文件中的令牌认证模式
             window.CMS.init({
-                config_url: "/admin/config.yml"
+                config_url: "/admin/config.yml",
+                load_config_file: true
             });
         });
     </script>
