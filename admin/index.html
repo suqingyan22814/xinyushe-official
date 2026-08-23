@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>新雨社管理后台</title>
+<style>
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f0e6;margin:0;color:#2b2620}
+.login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#5c0f18 0%,#a61b29 100%)}
+.box{background:#fffdf7;padding:40px;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.3);width:360px}
+.box h1{font-size:22px;color:#a61b29;margin-bottom:8px;text-align:center}
+.box p{font-size:13px;color:#5c5548;margin-bottom:24px;text-align:center}
+.box input{width:100%;padding:12px 16px;border:1px solid #e3d9bf;border-radius:4px;font-size:14px;margin-bottom:16px;background:#fff}
+.box button{width:100%;padding:12px;background:#a61b29;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer}
+.box button:hover{background:#7d1420}
+.error{color:#a61b29;font-size:13px;margin-bottom:12px;display:none}
+.admin{display:none;min-height:100vh}
+.header{background:#5c0f18;color:#f3e6c8;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+.header h2{font-size:18px}
+.header button{background:transparent;color:#f3e6c8;border:1px solid #f3e6c8;padding:6px 16px;border-radius:4px;cursor:pointer;font-size:13px}
+.main{display:flex;height:calc(100vh - 60px)}
+.sidebar{width:200px;background:#fffdf7;border-right:1px solid #e3d9bf;padding:16px 0;overflow-y:auto}
+.sidebar button{display:block;width:100%;padding:10px 20px;border:none;background:transparent;text-align:left;font-size:14px;cursor:pointer;color:#2b2620;font-family:inherit}
+.sidebar button:hover{background:#f5f0e6}
+.sidebar button.active{background:#a61b29;color:#fff}
+.content{flex:1;padding:24px;overflow-y:auto}
+.card{background:#fffdf7;border:1px solid #e3d9bf;border-radius:6px;padding:20px;margin-bottom:20px}
+.card h3{font-size:16px;color:#a61b29;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #e3d9bf}
+textarea{width:100%;height:400px;font-family:"Consolas","Courier New",monospace;font-size:13px;padding:12px;border:1px solid #e3d9bf;border-radius:4px;background:#faf8f3;resize:vertical;line-height:1.6}
+.actions{margin-top:16px;display:flex;gap:12px}
+.actions button{padding:10px 24px;border:none;border-radius:4px;font-size:14px;cursor:pointer;font-family:inherit}
+.btn-save{background:#a61b29;color:#fff}
+.btn-save:hover{background:#7d1420}
+.btn-export{background:#b8933f;color:#fff}
+.btn-export:hover{background:#9a7a32}
+.btn-reset{background:#e3d9bf;color:#2b2620}
+.btn-reset:hover{background:#d4c9af}
+.status{background:#f5f0e6;border-top:1px solid #e3d9bf;padding:12px 24px;font-size:13px;color:#5c5548}
+.status span{margin-right:24px}
+.log-panel{background:#fffdf7;border:1px solid #e3d9bf;border-radius:6px;padding:20px}
+.log-panel h3{font-size:16px;color:#a61b29;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #e3d9bf}
+.log-list{max-height:300px;overflow-y:auto}
+.log-item{padding:8px 12px;border-bottom:1px dashed #e3d9bf;font-size:13px;font-family:"Consolas","Courier New",monospace}
+</style>
+</head>
+<body>
+<div class="login" id="loginScreen">
+<div class="box">
+<h1>新雨社管理后台</h1>
+<p>青城司专用 · 仅限授权管理员访问</p>
+<div class="error" id="loginError">密码错误，请重试</div>
+<input type="password" id="passwordInput" placeholder="请输入管理密码" autocomplete="current-password">
+<button id="loginBtn">登 录</button>
+</div>
+</div>
+<div class="admin" id="adminContainer">
+<div class="header">
+<h2>新雨社数据管理后台</h2>
+<button id="logoutBtn">退出登录</button>
+</div>
+<div class="main">
+<div class="sidebar" id="sidebar">
+<button class="active" data-tab="site">站点配置</button>
+<button data-tab="news">群务公告</button>
+<button data-tab="people">人员管理</button>
+<button data-tab="zones">分区管理</button>
+<button data-tab="events">历史事件</button>
+<button data-tab="wiki">百科词条</button>
+<button data-tab="faq">常见问题</button>
+<button data-tab="banner">轮播配置</button>
+<button data-tab="timeline">编年时间线</button>
+<button data-tab="modlist">MOD列表</button><button data-tab="modtimeline">MOD项目年表</button>
+<button data-tab="history">社群史卷</button>
+<button data-tab="logs">修改日志</button>
+</div>
+<div class="content" id="adminContent">
+<div class="card" id="dataCard">
+<h3 id="dataTitle">站点配置</h3>
+<textarea id="dataEditor" spellcheck="false"></textarea>
+<div class="actions">
+<button class="btn-save" id="saveBtn">保存到本地</button>
+<button class="btn-export" id="exportBtn">导出 JSON 文件</button>
+<button class="btn-reset" id="resetBtn">恢复原始数据</button>
+</div>
+</div>
+<div class="log-panel" id="logPanel" style="display:none">
+<h3>修改日志</h3>
+<div class="log-list" id="logList"></div>
+</div>
+<div class="status" id="statusBar">
+<span id="statusFile">当前编辑：site.json</span>
+<span id="statusTime">最后更新：-</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+(function(){
+var TABS={site:"/data/site.json",news:"/data/news.json",people:"/data/people.json",zones:"/data/zones.json",events:"/data/events.json",wiki:"/data/wiki.json",faq:"/data/faq.json",banner:"/data/banner.json",timeline:"/data/timeline.json",modlist:"/data/mod-list.json",modtimeline:"/data/mod-timeline.json",history:"/data/history-volumes.json"};
+var TAB_NAMES={site:"站点配置",news:"群务公告",people:"人员管理",zones:"分区管理",events:"历史事件",wiki:"百科词条",faq:"常见问题",banner:"轮播配置",timeline:"编年时间线",modlist:"MOD列表",modtimeline:"MOD项目年表",history:"社群史卷"};
+var currentTab="site";
+function getLogs(){try{return JSON.parse(localStorage.getItem("xys_admin_logs")||"[]");}catch(e){return[];}}
+function addLog(action,detail){var logs=getLogs();logs.unshift({time:new Date().toLocaleString("zh-CN"),action:action,detail:detail});if(logs.length>50)logs.length=50;localStorage.setItem("xys_admin_logs",JSON.stringify(logs));}
+function renderLogs(){var logs=getLogs();var list=document.getElementById("logList");if(!list)return;if(logs.length===0){list.innerHTML="<div style='padding:8px 12px;font-size:13px;color:#948c7a'>暂无修改记录</div>";return;}list.innerHTML=logs.map(function(l){return "<div class='log-item'><span style='color:#948c7a'>["+l.time+"]</span> <span style='color:#a61b29;font-weight:bold'>"+l.action+"</span>："+l.detail+"</div>";}).join("");}
+function switchTab(tab){currentTab=tab;document.getElementById("sidebar").querySelectorAll("button").forEach(function(b){b.classList.toggle("active",b.dataset.tab===tab);});if(tab==="logs"){document.getElementById("dataCard").style.display="none";document.getElementById("logPanel").style.display="block";renderLogs();}else{document.getElementById("dataCard").style.display="block";document.getElementById("logPanel").style.display="none";document.getElementById("dataTitle").textContent=TAB_NAMES[tab]||tab;document.getElementById("statusFile").textContent="当前编辑："+(TABS[tab]||tab);loadTabData(tab);}}
+async function loadTabData(tab){var editor=document.getElementById("dataEditor");editor.value="加载中...";try{var res=await fetch(TABS[tab]);if(!res.ok)throw new Error("HTTP "+res.status);var data=await res.json();editor.value=JSON.stringify(data,null,2);document.getElementById("statusTime").textContent="最后更新："+new Date().toLocaleString("zh-CN");}catch(e){editor.value="加载失败："+e.message;}}
+document.getElementById("saveBtn").addEventListener("click",function(){var editor=document.getElementById("dataEditor");try{JSON.parse(editor.value);addLog("保存",currentTab+" 数据已更新（本地缓存）");alert("数据已保存到本地缓存！\n\n注意：此操作仅保存到您浏览器的本地存储中。\n如需同步到服务器，请手动下载 JSON 文件后上传至 Cloudflare Pages。");}catch(e){alert("JSON 格式错误："+e.message);}});
+document.getElementById("exportBtn").addEventListener("click",function(){var editor=document.getElementById("dataEditor");try{var blob=new Blob([editor.value],{type:"application/json"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download=TABS[currentTab].split("/")[1];a.click();URL.revokeObjectURL(url);addLog("导出","已导出 "+TABS[currentTab].split("/")[1]);}catch(e){alert("JSON 格式错误，无法导出："+e.message);}});
+document.getElementById("resetBtn").addEventListener("click",function(){if(confirm("确定要恢复原始数据吗？此操作不可撤销。")){loadTabData(currentTab);addLog("恢复","已恢复 "+TABS[currentTab].split("/")[1]+" 原始数据");}});
+var ADMIN_PASSWORD=localStorage.getItem("xys_admin_pw")||"xinyushe2026";
+var loginScreen=document.getElementById("loginScreen");
+var adminContainer=document.getElementById("adminContainer");
+var passwordInput=document.getElementById("passwordInput");
+var loginBtn=document.getElementById("loginBtn");
+var loginError=document.getElementById("loginError");
+var logoutBtn=document.getElementById("logoutBtn");
+function checkLogin(){var saved=localStorage.getItem("xys_admin_logged");if(saved==="1"){loginScreen.style.display="none";adminContainer.style.display="block";switchTab("site");}}
+loginBtn.addEventListener("click",function(){var pw=passwordInput.value;if(pw===ADMIN_PASSWORD){localStorage.setItem("xys_admin_logged","1");loginScreen.style.display="none";adminContainer.style.display="block";loginError.style.display="none";switchTab("site");}else{loginError.style.display="block";}});
+passwordInput.addEventListener("keydown",function(e){if(e.key==="Enter")loginBtn.click();});
+logoutBtn.addEventListener("click",function(){localStorage.removeItem("xys_admin_logged");adminContainer.style.display="none";loginScreen.style.display="flex";passwordInput.value="";loginError.style.display="none";});
+checkLogin();
+})();
+</script>
+</body>
+</html>

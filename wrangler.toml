@@ -1,0 +1,8 @@
+[build]
+  # 静态站点不需要构建命令
+  command = ""
+  
+[environment]
+  # 指定发布目录为项目根目录
+  [environment.production]
+    # 无特殊配置
