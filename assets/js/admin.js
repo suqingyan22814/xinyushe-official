@@ -6,6 +6,8 @@
 
     var API = '../api';
     var TOKEN_KEY = 'xinyushe-admin-token';
+    var FAIL_KEY = 'xinyushe-admin-fails';
+    var FAIL_LIMIT = 5;
     var FILE_LIST = ['site', 'banner', 'news', 'timeline', 'people', 'zones', 'events',
         'mod-list', 'mod-timeline', 'wiki', 'faq', 'history-volumes', 'org',
         'surveys', 'emergency', 'groups', 'archive'];
@@ -87,15 +89,33 @@
             .then(function (r) {
                 state.token = r.token;
                 state.user = r.user;
-                try { localStorage.setItem(TOKEN_KEY, r.token); } catch (e) {}
+                try { localStorage.setItem(TOKEN_KEY, r.token); localStorage.removeItem(FAIL_KEY); } catch (e) {}
                 enterApp();
             })
             .catch(function (e) {
                 $('loginErr').textContent = e.message;
                 $('loginBox').classList.add('shake');
                 setTimeout(function () { $('loginBox').classList.remove('shake'); }, 320);
+                bumpFail(e.message);
             })
             .then(function () { $('loginBtn').disabled = false; });
+    }
+
+    // 连续输错：达到 5 次转入彩蛋页
+    function bumpFail(reason) {
+        var n = 0;
+        try { n = parseInt(localStorage.getItem(FAIL_KEY) || '0', 10) || 0; } catch (e) {}
+        n += 1;
+        try { localStorage.setItem(FAIL_KEY, String(n)); } catch (e) {}
+        log('登录失败 ' + n + ' 次：' + reason, 'err');
+        if (n >= FAIL_LIMIT) {
+            try { localStorage.removeItem(FAIL_KEY); } catch (e) {}
+            $('loginErr').textContent = '尝试次数过多，正在核验访问来源…';
+            setTimeout(function () { location.href = 'index.html?trap=1'; }, 700);
+            return;
+        }
+        var left = FAIL_LIMIT - n;
+        $('loginErr').textContent = (reason || '账号或密码不正确') + '（再错 ' + left + ' 次将触发访问核验）';
     }
 
     function doApply() {
@@ -282,6 +302,54 @@
             .then(function () { $('btnSave').disabled = false; });
     }
 
+    /* ---------- 历史版本 ---------- */
+    function toggleHistory() {
+        var box = $('historyBox');
+        if (!box.classList.contains('hide')) { box.classList.add('hide'); return; }
+        if (!state.current) { msg('先选择文件', 'err'); return; }
+        if (state.mode === 'local') { msg('本地快照没有版本历史', 'err'); return; }
+        box.classList.remove('hide');
+        $('historyList').innerHTML = '<p class="adm-note">读取中…</p>';
+        api('/admin/history/' + state.current).then(function (r) {
+            var list = r.commits || [];
+            if (!list.length) { $('historyList').innerHTML = '<p class="adm-note">暂无提交记录</p>'; return; }
+            $('historyList').innerHTML = list.map(function (c, i) {
+                var d = new Date(c.date);
+                var p2 = n => String(n).padStart(2, '0');
+                var when = d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) +
+                           ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes());
+                return '<div class="hist-row" data-sha="' + esc(c.sha) + '">' +
+                    '<span class="hist-sha">' + esc(c.short) + '</span>' +
+                    '<span class="hist-msg">' + esc(c.message || '(无提交信息)') + '</span>' +
+                    '<span class="hist-date">' + when + '</span>' +
+                    (i === 0 ? '<span class="hist-cur">当前</span>' : '<span class="hist-act">载入</span>') +
+                    '</div>';
+            }).join('');
+            $('historyList').querySelectorAll('.hist-row').forEach(function (row) {
+                row.addEventListener('click', function () {
+                    loadVersion(row.dataset.sha);
+                });
+            });
+        }).catch(function (e) {
+            $('historyList').innerHTML = '<p class="adm-note">读取失败：' + esc(e.message) + '</p>';
+        });
+    }
+
+    function loadVersion(sha) {
+        if (!sha || !state.current) return;
+        msg('载入历史版本 ' + sha.slice(0, 7) + '…');
+        api('/admin/version/' + state.current + '?ref=' + encodeURIComponent(sha)).then(function (r) {
+            var pretty = r.text;
+            try { pretty = JSON.stringify(JSON.parse(r.text), null, 2); } catch (e) {}
+            $('editor').value = pretty;
+            hide($('diffBox'), true);
+            msg('已载入 ' + sha.slice(0, 7) + ' 版本；点「保存并提交」即回滚到此版本', 'ok');
+            log('载入历史版本 ' + state.current + ' @ ' + sha.slice(0, 7), 'ok');
+        }).catch(function (e) {
+            msg('载入失败：' + e.message, 'err');
+        });
+    }
+
     /* ---------- 编辑器工具 ---------- */
     function doFormat() {
         try { $('editor').value = JSON.stringify(JSON.parse($('editor').value), null, 2); msg('已格式化', 'ok'); }
@@ -465,6 +533,8 @@
         $('btnRevert').addEventListener('click', doRevert);
         $('btnDiff').addEventListener('click', doDiff);
         $('btnSave').addEventListener('click', doSave);
+        $('btnHistory').addEventListener('click', toggleHistory);
+        $('btnHistoryClose').addEventListener('click', function () { $('historyBox').classList.add('hide'); });
         document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); doSave(); }
         });

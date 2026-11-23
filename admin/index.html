@@ -401,6 +401,15 @@ body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#111}
   passwordInput.addEventListener('keydown', function(e){
     if (e.key === 'Enter') enter();
   });
+
+  /* 从数据后台连续输错跳转过来：?trap=1 */
+  try {
+    var trap = new URLSearchParams(location.search).get('trap');
+    if (trap) {
+      loginScreen.classList.add('hide');
+      startDispose();
+    }
+  } catch (e) {}
   accountInput.addEventListener('keydown', function(e){
     if (e.key === 'Enter') passwordInput.focus();
   });

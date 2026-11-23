@@ -273,3 +273,26 @@ h1, h2 { font-family: var(--font-head); margin: 0; }
     background: var(--seal-a06); padding: 1px 5px; border-radius: 3px; color: var(--ink);
 }
 .guide b { color: var(--ink); }
+
+/* ═══════ 历史版本面板 ═══════ */
+.adm-history {
+    margin-top: 10px; border: 1px solid var(--border);
+    border-radius: var(--radius-s); background: var(--paper); padding: 10px 12px;
+}
+.adm-history.hide { display: none; }
+.hist-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.hist-head b { font-size: 13px; color: var(--ink); }
+.hist-tip { font-size: 11px; color: var(--ink-muted); flex: 1; }
+.hist-list { max-height: 260px; overflow-y: auto; }
+.hist-row {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 6px 8px; border-radius: var(--radius-s); cursor: pointer;
+    font-size: 12px; border-bottom: 1px dashed var(--border-soft, var(--border));
+}
+.hist-row:hover { background: var(--seal-a06); }
+.hist-sha { font-family: var(--font-mono); font-size: 11px; color: var(--seal); }
+.hist-msg { flex: 1; min-width: 140px; color: var(--ink-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hist-date { font-size: 11px; color: var(--ink-muted); font-family: var(--font-mono); }
+.hist-cur { font-size: 10.5px; padding: 1px 7px; border-radius: 99px; background: var(--seal); color: var(--on-accent); }
+.hist-act { font-size: 10.5px; padding: 1px 7px; border-radius: 99px; border: 1px solid var(--border); color: var(--ink-secondary); }
+.hist-row:hover .hist-act { border-color: var(--seal); color: var(--seal); }

@@ -103,10 +103,19 @@
             <button class="btn small" id="btnFormat">≡ 格式化</button>
             <button class="btn small" id="btnCheck">✓ 校验</button>
             <button class="btn small" id="btnDownload">↓ 导出</button>
+            <button class="btn small" id="btnHistory">🕘 历史版本</button>
           </div>
         </div>
         <textarea id="editor" spellcheck="false" placeholder="从左侧选择一个文件开始编辑"></textarea>
         <pre class="adm-diff hide" id="diffBox"></pre>
+        <div class="adm-history hide" id="historyBox">
+          <div class="hist-head">
+            <b>历史版本</b>
+            <span class="hist-tip">点选任一版本可载入对照，确认后点「保存并提交」即回滚</span>
+            <button class="btn small" id="btnHistoryClose">收起</button>
+          </div>
+          <div class="hist-list" id="historyList"></div>
+        </div>
         <div class="adm-editor-foot">
           <span class="adm-msg" id="editMsg"></span>
           <div class="adm-editor-btns">

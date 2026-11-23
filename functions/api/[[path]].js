@@ -257,6 +257,33 @@ async function handleResetPassword(ctx, body) {
   return json({ ok: true, message: '已重置 ' + username + ' 的密码' });
 }
 
+/* ---------- 版本历史 ---------- */
+async function handleHistory(ctx, file) {
+  if (!ctx.auth) return fail('未登录', 401);
+  const dir = ctx.env.GITHUB_DIR || 'data';
+  const list = await ghApi(ctx.env,
+    `/repos/${ctx.env.GITHUB_REPO}/commits?path=${encodeURIComponent(dir + '/' + file)}&per_page=30`);
+  const out = (list || []).map(c => ({
+    sha: c.sha,
+    short: c.sha.slice(0, 7),
+    message: (c.commit && c.commit.message || '').split('\n')[0],
+    date: c.commit && c.commit.author && c.commit.author.date,
+    author: c.commit && c.commit.author && c.commit.author.name
+  }));
+  return json({ ok: true, commits: out });
+}
+
+async function handleVersion(ctx, file, ref) {
+  if (!ctx.auth) return fail('未登录', 401);
+  const dir = ctx.env.GITHUB_DIR || 'data';
+  const data = await ghApi(ctx.env,
+    `/repos/${ctx.env.GITHUB_REPO}/contents/${dir}/${file}?ref=${encodeURIComponent(ref)}`);
+  const bin = atob((data.content || '').replace(/\s/g, ''));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return json({ ok: true, ref, sha: data.sha, text: new TextDecoder('utf-8').decode(bytes) });
+}
+
 /* ---------- 数据读写代理 ---------- */
 const DAILY_ALLOW = ['site', 'news', 'timeline', 'events', 'zones', 'people',
   'surveys', 'faq', 'groups', 'emergency', 'banner', 'mod-list', 'mod-timeline', 'wiki', 'org'];
@@ -326,6 +353,11 @@ export async function onRequest(context) {
     if (path === 'admin/users') return await handleListUsers(context);
     if (path === 'admin/status' && request.method === 'POST') return await handleSetStatus(context, body);
     if (path === 'admin/password' && request.method === 'POST') return await handleResetPassword(context, body);
+
+    const mHist = path.match(/^admin\/history\/([\w.-]+\.json)$/);
+    if (mHist && request.method === 'GET') return await handleHistory(context, mHist[1]);
+    const mVer = path.match(/^admin\/version\/([\w.-]+\.json)$/);
+    if (mVer && request.method === 'GET') return await handleVersion(context, mVer[1], url.searchParams.get('ref') || 'HEAD');
 
     const mData = path.match(/^data\/([\w.-]+\.json)$/);
     if (mData) {
