@@ -32,6 +32,56 @@
         return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
+    /* 中文对话框：替代浏览器原生的英文 OK/Cancel */
+    function dialog(opts) {
+        return new Promise(function (resolve) {
+            var mask = document.createElement('div');
+            mask.className = 'xy-dialog-mask';
+            var box = document.createElement('div');
+            box.className = 'xy-dialog';
+            var title = document.createElement('h3');
+            title.textContent = opts.title || '提示';
+            box.appendChild(title);
+            if (opts.body) {
+                var p = document.createElement('p');
+                p.textContent = opts.body;
+                box.appendChild(p);
+            }
+            var input = null;
+            if (opts.input) {
+                input = document.createElement('input');
+                input.type = opts.inputType || 'text';
+                input.placeholder = opts.placeholder || '';
+                input.value = opts.value || '';
+                box.appendChild(input);
+            }
+            var row = document.createElement('div');
+            row.className = 'xy-dialog-btns';
+            var cancel = document.createElement('button');
+            cancel.className = 'btn';
+            cancel.textContent = opts.cancelText || '取消';
+            var ok = document.createElement('button');
+            ok.className = 'btn primary';
+            ok.textContent = opts.okText || '确定';
+            if (opts.danger) ok.classList.add('danger');
+            row.appendChild(cancel);
+            row.appendChild(ok);
+            box.appendChild(row);
+            mask.appendChild(box);
+            document.body.appendChild(mask);
+            if (input) setTimeout(function () { input.focus(); }, 30);
+            function close(v) { mask.remove(); resolve(v); }
+            cancel.addEventListener('click', function () { close(null); });
+            ok.addEventListener('click', function () {
+                close(opts.input ? (input.value || '') : true);
+            });
+            if (input) input.addEventListener('keydown', function (e) { if (e.key === 'Enter') close(input.value || ''); });
+            document.addEventListener('keydown', function esc(e) {
+                if (e.key === 'Escape') { document.removeEventListener('keydown', esc); close(null); }
+            });
+        });
+    }
+
     function log(msg, tone) {
         var box = $('logList');
         if (!box) return;
@@ -67,6 +117,7 @@
                 if (!r.ok || (data && data.ok === false)) {
                     var err = new Error((data && data.error) || ('HTTP ' + r.status));
                     err.status = r.status;
+                    err.data = data || {};
                     throw err;
                 }
                 return data;
@@ -93,9 +144,30 @@
                 enterApp();
             })
             .catch(function (e) {
-                $('loginErr').textContent = e.message;
                 $('loginBox').classList.add('shake');
                 setTimeout(function () { $('loginBox').classList.remove('shake'); }, 320);
+                var d = e.data || {};
+                if (e.status === 429) {
+                    var sec = d.retryAfter || 900;
+                    $('loginErr').textContent = '尝试次数过多，已锁定 ' + Math.ceil(sec / 60) + ' 分钟';
+                    $('loginBtn').disabled = true;
+                    var left = sec;
+                    var timer = setInterval(function () {
+                        left -= 1;
+                        if (left <= 0) {
+                            clearInterval(timer);
+                            $('loginBtn').disabled = false;
+                            $('loginErr').textContent = '';
+                            return;
+                        }
+                        $('loginErr').textContent = '尝试次数过多，还需 ' + Math.ceil(left / 60) + ' 分钟';
+                    }, 1000);
+                    log('登录被锁定 ' + Math.ceil(sec / 60) + ' 分钟', 'err');
+                    return;
+                }
+                $('loginErr').textContent = d.left !== undefined
+                    ? (e.message + '（还可再试 ' + d.left + ' 次）')
+                    : e.message;
                 bumpFail(e.message);
             })
             .then(function () { $('loginBtn').disabled = false; });
@@ -420,18 +492,38 @@
                 el.addEventListener('click', function () {
                     var u = el.dataset.u, a = el.dataset.a;
                     if (a === 'reset') {
-                        var np = prompt('给 ' + u + ' 设置新密码（至少 6 位）');
-                        if (!np) return;
-                        api('/admin/password', { method: 'POST', body: { username: u, password: np } })
-                            .then(function (r) { log(r.message, 'ok'); alert(r.message); })
-                            .catch(function (e) { alert(e.message); });
+                        dialog({
+                            title: '重置密码',
+                            body: '给 ' + u + ' 设置一个新密码（至少 6 位）',
+                            input: true,
+                            placeholder: '输入新密码',
+                            okText: '确认重置'
+                        }).then(function (np) {
+                            if (!np) return;
+                            if (np.length < 6) { dialog({ title: '密码太短', body: '至少 6 位', okText: '知道了' }); return; }
+                            api('/admin/password', { method: 'POST', body: { username: u, password: np } })
+                                .then(function (r) {
+                                    log(r.message, 'ok');
+                                    dialog({ title: '已重置', body: '把新密码私下告诉 ' + u + '，让他登录后自己改。', okText: '好' });
+                                })
+                                .catch(function (e) { dialog({ title: '重置失败', body: e.message, okText: '知道了' }); });
+                        });
                         return;
                     }
-                    if (a === 'delete' && !confirm('确定删除 ' + u + '？')) return;
-                    if (a === 'disable' && !confirm('确定停用 ' + u + '？')) return;
-                    api('/admin/status', { method: 'POST', body: { username: u, action: a } })
-                        .then(function (r) { log(r.message, 'ok'); loadMembers(); })
-                        .catch(function (e) { alert(e.message); });
+                    var isDelete = a === 'delete';
+                    dialog({
+                        title: isDelete ? '删除成员' : '停用成员',
+                        body: isDelete
+                            ? '确定删除 ' + u + ' 吗？账号与记录一并移除，不可恢复。'
+                            : '确定停用 ' + u + ' 吗？对方会立刻无法登录，数据保留，可随时启用。',
+                        okText: isDelete ? '确认删除' : '确认停用',
+                        danger: isDelete
+                    }).then(function (yes) {
+                        if (!yes) return;
+                        api('/admin/status', { method: 'POST', body: { username: u, action: a } })
+                            .then(function (r) { log(r.message, 'ok'); loadMembers(); })
+                            .catch(function (e) { dialog({ title: '操作失败', body: e.message, okText: '知道了' }); });
+                    });
                 });
             });
         }).catch(function (e) { log('读取成员失败：' + e.message, 'err'); });
