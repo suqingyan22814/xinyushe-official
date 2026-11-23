@@ -1429,3 +1429,29 @@
 .history-period { font-size: 14px; color: var(--navy); margin: 14px 0 6px; }
 .history-li { font-size: 13px; line-height: 1.9; color: var(--ink-secondary); }
 .history-end { text-align: center; color: var(--ink-muted); margin: 18px 0; letter-spacing: 2px; }
+
+/* ── 编辑成员（主页） ── */
+.mem-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin: 12px 0; }
+.mem-card {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 10px 12px; border: 1px solid var(--border);
+    border-radius: var(--radius-m); background: var(--paper-card);
+}
+.mem-avatar {
+    width: 30px; height: 30px; flex: none; border-radius: 50%;
+    background: var(--seal-a10); color: var(--seal);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+}
+.mem-card.tone-super .mem-avatar { background: var(--seal); color: var(--on-accent); }
+.mem-name { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.mem-role { font-size: 11px; color: var(--seal); border: 1px solid var(--seal-a30, var(--seal)); border-radius: 99px; padding: 0 7px; }
+.mem-since { font-size: 11px; color: var(--ink-muted); margin-left: auto; }
+.mem-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+.mem-btn {
+    display: inline-block; padding: 8px 18px; border-radius: 99px;
+    border: 1px solid var(--seal); color: var(--seal);
+    font-size: 13px; text-decoration: none;
+}
+.mem-btn.primary { background: var(--seal); color: var(--on-accent); }
+.mem-tip { font-size: 11.5px; color: var(--ink-muted); }

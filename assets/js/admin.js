@@ -1,54 +1,46 @@
-/* 新雨社数据后台 v0.2
- * 双级权限 · 本地模式（免 Token） + 云端模式（GitHub Contents API）
- *
- * 账号改动位置：下方 ACCOUNTS 数组。改完记得刷新页面。
+/* 新雨社数据后台 v0.3
+ * 账号登录（Pages Functions + KV）· 云端/本地双数据源 · 成员审批
  */
 (function () {
     'use strict';
 
-    /* ================= 账号 ================= */
-    var ACCOUNTS = [
-        { user: 'xinyushe', pass: 'yushu2026',  role: 'super', label: '超级管理员' },
-        { user: 'daily',    pass: 'daily2026',  role: 'daily', label: '日常管理员' }
-    ];
-    // 日常管理员可编辑的文件（其余为史书/公报等只读档案）
-    var DAILY_ALLOW = ['site', 'news', 'timeline', 'events', 'zones', 'people',
-                       'surveys', 'faq', 'groups', 'emergency', 'banner',
-                       'mod-list', 'mod-timeline', 'wiki', 'org'];
-
-    var SESSION_KEY = 'xinyushe-admin-session';
-    var CFG_KEY = 'xinyushe-admin-cfg';
-    var API = 'https://api.github.com';
+    var API = '../api';
+    var TOKEN_KEY = 'xinyushe-admin-token';
     var FILE_LIST = ['site', 'banner', 'news', 'timeline', 'people', 'zones', 'events',
-                     'mod-list', 'mod-timeline', 'wiki', 'faq', 'history-volumes', 'org',
-                     'surveys', 'emergency', 'groups', 'archive'];
+        'mod-list', 'mod-timeline', 'wiki', 'faq', 'history-volumes', 'org',
+        'surveys', 'emergency', 'groups', 'archive'];
+    var DAILY_ALLOW = ['site', 'news', 'timeline', 'events', 'zones', 'people',
+        'surveys', 'faq', 'groups', 'emergency', 'banner', 'mod-list', 'mod-timeline', 'wiki', 'org'];
 
     var state = {
-        role: null,
-        mode: 'local',
+        token: null,
+        user: null,
+        mode: 'cloud',
         files: [],
         current: null,
-        sha: null,
         original: '',
         local: {},
-        dirty: {}
+        requests: [],
+        users: []
     };
 
     function $(id) { return document.getElementById(id); }
     function hide(el, v) { if (el) el.classList.toggle('hide', !!v); }
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
 
     function log(msg, tone) {
         var box = $('logList');
         if (!box) return;
         var li = document.createElement('li');
         var t = new Date();
-        var hh = String(t.getHours()).padStart(2, '0');
-        var mm = String(t.getMinutes()).padStart(2, '0');
-        var ss = String(t.getSeconds()).padStart(2, '0');
+        var p2 = n => String(n).padStart(2, '0');
         var color = tone === 'err' ? ' style="color:var(--seal)"' : tone === 'ok' ? ' style="color:var(--ok)"' : '';
-        li.innerHTML = '<time>' + hh + ':' + mm + ':' + ss + '</time><span' + color + '>' + msg + '</span>';
+        li.innerHTML = '<time>' + p2(t.getHours()) + ':' + p2(t.getMinutes()) + ':' + p2(t.getSeconds()) +
+            '</time><span' + color + '>' + esc(msg) + '</span>';
         box.insertBefore(li, box.firstChild);
-        while (box.children.length > 80) box.removeChild(box.lastChild);
+        while (box.children.length > 120) box.removeChild(box.lastChild);
     }
 
     function msg(text, tone) {
@@ -57,189 +49,11 @@
         el.className = 'adm-msg' + (tone ? ' ' + tone : '');
     }
 
-    /* ================= 登录 ================= */
-    function findAccount(user, pass) {
-        for (var i = 0; i < ACCOUNTS.length; i++) {
-            if (ACCOUNTS[i].user === user && ACCOUNTS[i].pass === pass) return ACCOUNTS[i];
-        }
-        return null;
-    }
-
-    function doLogin() {
-        var user = $('loginUser').value.trim();
-        var pass = $('loginPass').value;
-        var acc = findAccount(user, pass);
-        var err = $('loginErr');
-        var box = $('loginBox');
-        if (!acc) {
-            err.textContent = '账号或密码不正确';
-            box.classList.add('shake');
-            setTimeout(function () { box.classList.remove('shake'); }, 320);
-            return;
-        }
-        state.role = acc.role;
-        try { localStorage.setItem(SESSION_KEY, JSON.stringify({ user: acc.user, role: acc.role, label: acc.label })); } catch (e) {}
-        enterApp(acc);
-    }
-
-    function enterApp(acc) {
-        $('loginScreen').classList.add('hide');
-        $('appRoot').classList.remove('hide');
-        var badge = $('roleBadge');
-        badge.textContent = acc.label + ' · ' + acc.user;
-        badge.className = 'role-badge ' + acc.role;
-        $('appSub').textContent = acc.role === 'super'
-            ? '超级管理员 · 可编辑全部数据、新建与删除文件'
-            : '日常管理员 · 可维护公告、分区、人物、普查等日常数据';
-        log('登录成功：' + acc.label + '（' + acc.user + '）', 'ok');
-        applyRole();
-        restoreCloudCfg();
-    }
-
-    function applyRole() {
-        var isSuper = state.role === 'super';
-        // 日常管理员看不到「云端提交」以外的高级入口（后续版本扩展）
-        hide($('btnSave'), false);
-        if (!isSuper) {
-            $('appSub').title = '部分档案（史书、公报原文）对日常管理员只读';
-        }
-    }
-
-    function doLogout() {
-        try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
-        location.reload();
-    }
-
-    function restoreSession() {
-        try {
-            var raw = localStorage.getItem(SESSION_KEY);
-            if (!raw) return false;
-            var s = JSON.parse(raw);
-            var acc = null;
-            for (var i = 0; i < ACCOUNTS.length; i++) if (ACCOUNTS[i].user === s.user) acc = ACCOUNTS[i];
-            if (!acc) return false;
-            state.role = acc.role;
-            enterApp(acc);
-            return true;
-        } catch (e) { return false; }
-    }
-
-    /* ================= base64 ================= */
-    function b64encode(str) {
-        var bytes = new TextEncoder().encode(str), bin = '';
-        for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-        return btoa(bin);
-    }
-    function b64decode(b64) {
-        var bin = atob(String(b64).replace(/\s/g, ''));
-        var bytes = new Uint8Array(bin.length);
-        for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-        return new TextDecoder('utf-8').decode(bytes);
-    }
-
-    /* ================= 模式 ================= */
-    function setMode(mode) {
-        state.mode = mode;
-        hide($('paneLocal'), mode !== 'local');
-        hide($('paneCloud'), mode !== 'cloud');
-        $('srcLocal').classList.toggle('active', mode === 'local');
-        $('srcCloud').classList.toggle('active', mode === 'cloud');
-        state.files = [];
-        state.current = null;
-        $('fileList').innerHTML = '';
-        $('editor').value = '';
-        $('editorTitle').textContent = '选择左侧文件';
-        msg(mode === 'local' ? '本地模式：读取当前站点数据' : '云端模式：需要可写 Token');
-    }
-
-    /* ================= 本地模式 ================= */
-    function loadLocal() {
-        msg('读取本地数据…');
-        var base = '../data/';
-        var jobs = FILE_LIST.map(function (name) {
-            return fetch(base + name + '.json', { cache: 'no-store' })
-                .then(function (r) { if (!r.ok) throw new Error(name + ' HTTP ' + r.status); return r.text(); })
-                .then(function (txt) {
-                    var pretty = txt;
-                    try { pretty = JSON.stringify(JSON.parse(txt), null, 2); } catch (e) {}
-                    state.local[name] = pretty;
-                    return name;
-                })
-                .catch(function (e) { log('读取失败 ' + name + '：' + e.message, 'err'); return null; });
-        });
-        Promise.all(jobs).then(function () {
-            state.files = FILE_LIST.filter(function (n) { return state.local[n] !== undefined; })
-                .map(function (n) { return { name: n + '.json', key: n, size: state.local[n].length }; });
-            renderFiles();
-            $('localHint').textContent = '已读取 ' + state.files.length + ' 个文件';
-            log('本地数据载入 ' + state.files.length + ' 个文件', 'ok');
-            msg('本地数据已载入，选择左侧文件开始编辑', 'ok');
-        });
-    }
-
-    function openLocal(key) {
-        var txt = state.local[key];
-        if (txt === undefined) { msg('本地数据未载入', 'err'); return; }
-        state.current = key + '.json';
-        state.sha = null;
-        state.original = txt;
-        $('editor').value = txt;
-        $('editorTitle').textContent = state.current + '　·　本地模式';
-        hide($('diffBox'), true);
-        renderFiles();
-        msg('已载入 ' + (txt.length / 1024).toFixed(1) + ' KB', 'ok');
-    }
-
-    function exportAll() {
-        var out = {};
-        FILE_LIST.forEach(function (n) {
-            if (state.local[n] !== undefined) {
-                try { out[n] = JSON.parse(state.local[n]); } catch (e) {}
-            }
-        });
-        var d = new Date();
-        var stamp = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
-        download('xinyushe-data-' + stamp + '.json', JSON.stringify(out, null, 2));
-        log('已导出全部数据（' + Object.keys(out).length + ' 个文件）', 'ok');
-    }
-
-    /* ================= 云端模式 ================= */
-    function loadCfg() {
-        try {
-            var c = JSON.parse(localStorage.getItem(CFG_KEY) || 'null');
-            if (!c || !c.repo || !c.token) return null;
-            c.branch = c.branch || 'main';
-            c.dir = c.dir || 'data';
-            return c;
-        } catch (e) { return null; }
-    }
-
-    function restoreCloudCfg() {
-        var c = loadCfg();
-        if (!c) return;
-        state.cfg = c;
-        $('cfgRepo').value = c.repo;
-        $('cfgBranch').value = c.branch;
-        $('cfgDir').value = c.dir;
-        $('cfgToken').value = c.token;
-        log('已恢复上次的仓库配置（未自动连接）');
-    }
-
-    function readCfgForm() {
-        var repo = $('cfgRepo').value.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\.git$/, '').replace(/\/+$/, '');
-        var token = $('cfgToken').value.trim();
-        var branch = $('cfgBranch').value.trim() || 'main';
-        var dir = $('cfgDir').value.trim().replace(/^\/+|\/+$/g, '') || 'data';
-        if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { msg('仓库格式应为 owner/repo', 'err'); return null; }
-        if (!token) { msg('请填写 Token', 'err'); return null; }
-        return { repo: repo, token: token, branch: branch, dir: dir };
-    }
-
+    /* ---------- API ---------- */
     function api(path, opts) {
         opts = opts || {};
-        var headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
-        if (state.cfg && state.cfg.token) headers['Authorization'] = 'Bearer ' + state.cfg.token;
-        if (opts.body) headers['Content-Type'] = 'application/json';
+        var headers = { 'Content-Type': 'application/json' };
+        if (state.token) headers['Authorization'] = 'Bearer ' + state.token;
         return fetch(API + path, {
             method: opts.method || 'GET',
             headers: headers,
@@ -248,8 +62,8 @@
             return r.text().then(function (txt) {
                 var data = null;
                 try { data = txt ? JSON.parse(txt) : null; } catch (e) {}
-                if (!r.ok) {
-                    var err = new Error((data && data.message) || ('HTTP ' + r.status));
+                if (!r.ok || (data && data.ok === false)) {
+                    var err = new Error((data && data.error) || ('HTTP ' + r.status));
                     err.status = r.status;
                     throw err;
                 }
@@ -258,237 +72,366 @@
         });
     }
 
-    function connect() {
-        var cfg = readCfgForm();
-        if (!cfg) return;
-        state.cfg = cfg;
-        msg('连接中…');
-        api('/repos/' + cfg.repo).then(function () {
-            try { localStorage.setItem(CFG_KEY, JSON.stringify(cfg)); } catch (e) {}
-            log('连接成功：' + cfg.repo + ' · ' + cfg.branch, 'ok');
-            msg('已连接 ' + cfg.repo, 'ok');
-            return listCloud();
-        }).catch(function (e) {
-            log('连接失败：' + e.message, 'err');
-            msg(e.status === 401 ? 'Token 无效或已过期' : e.message, 'err');
-        });
+    /* ---------- 登录 / 申请 ---------- */
+    function showScreen(id) {
+        ['loginScreen', 'applyScreen'].forEach(function (k) { hide($(k), k !== id); });
     }
 
-    function listCloud() {
-        var cfg = state.cfg;
-        if (!cfg) return Promise.reject(new Error('未连接'));
-        return api('/repos/' + cfg.repo + '/contents/' + cfg.dir + '?ref=' + encodeURIComponent(cfg.branch))
-            .then(function (items) {
-                state.files = (items || []).filter(function (x) {
-                    return x.type === 'file' && /\.json$/i.test(x.name);
-                }).sort(function (a, b) { return a.name.localeCompare(b.name); });
-                renderFiles();
-                log('仓库文件 ' + state.files.length + ' 个', 'ok');
+    function doLogin() {
+        var u = $('loginUser').value.trim().toLowerCase();
+        var p = $('loginPass').value;
+        if (!u || !p) { $('loginErr').textContent = '请填写账号和密码'; return; }
+        $('loginBtn').disabled = true;
+        $('loginErr').textContent = '登录中…';
+        api('/login', { method: 'POST', body: { username: u, password: p } })
+            .then(function (r) {
+                state.token = r.token;
+                state.user = r.user;
+                try { localStorage.setItem(TOKEN_KEY, r.token); } catch (e) {}
+                enterApp();
             })
             .catch(function (e) {
-                log('读取目录失败：' + e.message, 'err');
-                msg(e.status === 404 ? '目录不存在：' + cfg.dir : e.message, 'err');
-            });
+                $('loginErr').textContent = e.message;
+                $('loginBox').classList.add('shake');
+                setTimeout(function () { $('loginBox').classList.remove('shake'); }, 320);
+            })
+            .then(function () { $('loginBtn').disabled = false; });
     }
 
-    function openCloud(name) {
-        var cfg = state.cfg;
-        if (!cfg) { msg('请先在云端模式连接仓库', 'err'); return; }
-        var key = name.replace(/\.json$/i, '');
-        if (state.role !== 'super' && DAILY_ALLOW.indexOf(key) < 0) {
-            msg('该文件对日常管理员只读', 'err');
-            return;
+    function doApply() {
+        var u = $('applyUser').value.trim().toLowerCase();
+        var p = $('applyPass').value;
+        var reason = $('applyReason').value.trim();
+        if (!u || !p) { $('applyErr').textContent = '账号和密码都要填'; return; }
+        $('applyBtn').disabled = true;
+        $('applyErr').textContent = '提交中…';
+        api('/register', { method: 'POST', body: { username: u, password: p, reason: reason } })
+            .then(function (r) {
+                $('applyErr').textContent = r.message || '已提交，等待审批';
+                log('提交编辑权限申请：' + u, 'ok');
+                setTimeout(function () { showScreen('loginScreen'); $('loginErr').textContent = '申请已提交，等超级管理员审批'; }, 1400);
+            })
+            .catch(function (e) { $('applyErr').textContent = e.message; })
+            .then(function () { $('applyBtn').disabled = false; });
+    }
+
+    function enterApp() {
+        hide($('loginScreen'), true);
+        hide($('applyScreen'), true);
+        $('appRoot').classList.remove('hide');
+        var u = state.user;
+        var badge = $('roleBadge');
+        var label = u.role === 'super' ? '超级管理员' : u.role === 'viewer' ? '只读成员' : '编辑';
+        badge.textContent = label + ' · ' + u.username;
+        badge.className = 'role-badge ' + u.role;
+        $('appSub').textContent = u.role === 'super'
+            ? '超级管理员 · 全部数据 + 成员审批'
+            : (u.role === 'viewer' ? '只读成员 · 可查看不可保存' : '编辑 · 日常数据维护');
+        log('登录成功：' + u.username + '（' + label + '）', 'ok');
+        if (u.role !== 'super') {
+            hide($('cardCreate'), true);
         }
-        api('/repos/' + cfg.repo + '/contents/' + cfg.dir + '/' + name + '?ref=' + encodeURIComponent(cfg.branch))
-            .then(function (data) {
-                var text = b64decode(data.content || '');
-                var pretty = text;
-                try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch (e) {}
-                state.current = name;
-                state.sha = data.sha;
-                state.original = pretty;
-                $('editor').value = pretty;
-                $('editorTitle').textContent = name + '　·　sha ' + data.sha.slice(0, 7);
-                hide($('diffBox'), true);
-                renderFiles();
-                msg('已载入 ' + (pretty.length / 1024).toFixed(1) + ' KB', 'ok');
-            })
-            .catch(function (e) {
-                msg('读取失败：' + e.message, 'err');
-                log('读取 ' + name + ' 失败：' + e.message, 'err');
-            });
+        loadFileList();
+    }
+
+    function doLogout() {
+        api('/logout', { method: 'POST' }).catch(function () {});
+        try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
+        setTimeout(function () { location.reload(); }, 120);
+    }
+
+    function restoreSession() {
+        var t = null;
+        try { t = localStorage.getItem(TOKEN_KEY); } catch (e) {}
+        if (!t) return false;
+        state.token = t;
+        api('/me').then(function (r) {
+            state.user = r.user;
+            enterApp();
+        }).catch(function () {
+            try { localStorage.removeItem(TOKEN_KEY); } catch (e) {}
+        });
+        return true;
+    }
+
+    /* ---------- 文件列表 ---------- */
+    function loadFileList() {
+        if (state.mode === 'local') { loadLocal(); return; }
+        state.files = FILE_LIST.map(function (k) { return { name: k + '.json', size: 0 }; });
+        renderFiles();
+        msg('云端模式：点左侧文件载入', '');
     }
 
     function renderFiles() {
         var ul = $('fileList');
         ul.innerHTML = '';
         if (!state.files.length) {
-            ul.innerHTML = '<li style="cursor:default;color:var(--ink-muted)">' +
-                (state.mode === 'local' ? '点上方「读取本地数据」' : '先连接仓库') + '</li>';
+            ul.innerHTML = '<li style="cursor:default;color:var(--ink-muted)">暂无文件</li>';
             return;
         }
         state.files.forEach(function (f) {
-            var name = f.name;
-            var key = name.replace(/\.json$/i, '');
+            var name = f.name, key = name.replace(/\.json$/i, '');
             var li = document.createElement('li');
-            var locked = state.role !== 'super' && DAILY_ALLOW.indexOf(key) < 0;
+            var locked = state.user && state.user.role !== 'super' && DAILY_ALLOW.indexOf(key) < 0;
             li.textContent = key + (locked ? ' 🔒' : '');
-            var size = document.createElement('span');
-            size.textContent = (f.size / 1024).toFixed(0) + 'K';
-            li.appendChild(size);
+            if (f.size) {
+                var sz = document.createElement('span');
+                sz.textContent = (f.size / 1024).toFixed(0) + 'K';
+                li.appendChild(sz);
+            }
             li.dataset.name = name;
             if (state.current === name) li.className = 'active';
-            li.addEventListener('click', function () {
-                if (state.mode === 'local') openLocal(key);
-                else openCloud(name);
-            });
+            li.addEventListener('click', function () { openFile(key); });
             ul.appendChild(li);
         });
     }
 
-    /* ================= 编辑器 ================= */
+    /* ---------- 打开 / 保存 ---------- */
+    function openFile(key) {
+        var name = key + '.json';
+        if (state.mode === 'local') {
+            var txt = state.local[key];
+            if (txt === undefined) { msg('本地数据未载入', 'err'); return; }
+            setEditor(name, txt, '本地快照');
+            return;
+        }
+        msg('读取中…');
+        api('/data/' + name).then(function (r) {
+            var pretty = r.text;
+            try { pretty = JSON.stringify(JSON.parse(r.text), null, 2); } catch (e) {}
+            state.sha = r.sha;
+            setEditor(name, pretty, '云端 · sha ' + String(r.sha).slice(0, 7));
+            msg('已载入 ' + (pretty.length / 1024).toFixed(1) + ' KB', 'ok');
+        }).catch(function (e) {
+            msg('读取失败：' + e.message, 'err');
+            log('读取 ' + name + ' 失败：' + e.message, 'err');
+        });
+    }
+
+    function setEditor(name, text, note) {
+        state.current = name;
+        state.original = text;
+        $('editor').value = text;
+        $('editorTitle').textContent = name + '　·　' + note;
+        hide($('diffBox'), true);
+        renderFiles();
+    }
+
+    function loadLocal() {
+        msg('读取本地快照…');
+        var jobs = FILE_LIST.map(function (k) {
+            return fetch('../data/' + k + '.json', { cache: 'no-store' })
+                .then(function (r) { if (!r.ok) throw new Error(k); return r.text(); })
+                .then(function (t) {
+                    var pretty = t;
+                    try { pretty = JSON.stringify(JSON.parse(t), null, 2); } catch (e) {}
+                    state.local[k] = pretty;
+                    return { name: k + '.json', size: t.length };
+                })
+                .catch(function () { return null; });
+        });
+        Promise.all(jobs).then(function (list) {
+            state.files = list.filter(Boolean);
+            renderFiles();
+            msg('本地快照已载入 ' + state.files.length + ' 个文件（不可提交）', 'ok');
+        });
+    }
+
+    function doSave() {
+        if (state.mode === 'local') { msg('本地快照不能提交，请切换到云端', 'err'); return; }
+        if (!state.current) { msg('先选择文件', 'err'); return; }
+        if (state.user.role === 'viewer') { msg('只读成员不能保存', 'err'); return; }
+        var parsed;
+        try { parsed = JSON.parse($('editor').value); } catch (e) { msg('语法错误：' + e.message, 'err'); return; }
+        var text = JSON.stringify(parsed, null, 2);
+        $('btnSave').disabled = true;
+        msg('提交中…');
+        api('/data/' + state.current, { method: 'PUT', body: { text: text, sha: state.sha } })
+            .then(function (r) {
+                if (r.sha) state.sha = r.sha;
+                state.original = text;
+                $('editorTitle').textContent = state.current + '　·　云端 · sha ' + String(r.sha || '').slice(0, 7);
+                msg('已提交仓库，部署后生效', 'ok');
+                log('提交 ' + state.current + ' · ' + String(r.commit || '').slice(0, 7), 'ok');
+            })
+            .catch(function (e) {
+                msg('提交失败：' + e.message, 'err');
+                log('提交失败：' + e.message, 'err');
+            })
+            .then(function () { $('btnSave').disabled = false; });
+    }
+
+    /* ---------- 编辑器工具 ---------- */
     function doFormat() {
-        var ed = $('editor');
+        try { $('editor').value = JSON.stringify(JSON.parse($('editor').value), null, 2); msg('已格式化', 'ok'); }
+        catch (e) { msg('JSON 语法错误：' + e.message, 'err'); }
+    }
+    function doCheck() {
         try {
-            ed.value = JSON.stringify(JSON.parse(ed.value), null, 2);
-            msg('已格式化', 'ok');
+            var d = JSON.parse($('editor').value);
+            var kind = Array.isArray(d) ? '数组 ' + d.length + ' 项' : '对象 ' + Object.keys(d).length + ' 键';
+            msg('语法正确 · ' + kind, 'ok');
         } catch (e) { msg('JSON 语法错误：' + e.message, 'err'); }
     }
-
-    function doCheck() {
-        var ed = $('editor');
-        try {
-            var data = JSON.parse(ed.value);
-            var kind = Array.isArray(data) ? '数组 ' + data.length + ' 项' : '对象 ' + Object.keys(data).length + ' 键';
-            msg('语法正确 · ' + kind, 'ok');
-            log('校验通过：' + state.current + '（' + kind + '）', 'ok');
-        } catch (e) {
-            msg('JSON 语法错误：' + e.message, 'err');
-            log('校验失败：' + state.current + ' → ' + e.message, 'err');
-        }
-    }
-
-    function download(name, text) {
-        var blob = new Blob([text], { type: 'application/json;charset=utf-8' });
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = name;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800);
-    }
-
     function doDownload() {
         if (!state.current) { msg('先选择文件', 'err'); return; }
-        download(state.current, $('editor').value);
-        log('已导出 ' + state.current, 'ok');
+        var blob = new Blob([$('editor').value], { type: 'application/json;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = state.current;
+        document.body.appendChild(a); a.click();
+        setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+        log('导出 ' + state.current, 'ok');
     }
-
     function doRevert() {
         if (!state.current) return;
         $('editor').value = state.original;
         hide($('diffBox'), true);
-        msg('已还原为载入时的内容');
+        msg('已还原');
     }
-
     function doDiff() {
         var box = $('diffBox');
         if (!box.classList.contains('hide')) { hide(box, true); return; }
-        var a = state.original.split('\n');
-        var b = $('editor').value.split('\n');
-        var out = [];
-        var max = Math.max(a.length, b.length);
+        var a = state.original.split('\n'), b = $('editor').value.split('\n');
+        var out = [], max = Math.max(a.length, b.length);
         for (var i = 0; i < max; i++) {
-            var la = a[i], lb = b[i];
-            if (la === lb) {
-                if (out.length && i < 400) out.push('<span class="same">  ' + esc(la) + '</span>');
-                continue;
-            }
-            if (la !== undefined) out.push('<span class="del">- ' + esc(la) + '</span>');
-            if (lb !== undefined) out.push('<span class="add">+ ' + esc(lb) + '</span>');
+            if (a[i] === b[i]) { if (out.length && i < 300) out.push('<span class="same">  ' + esc(a[i]) + '</span>'); continue; }
+            if (a[i] !== undefined) out.push('<span class="del">- ' + esc(a[i]) + '</span>');
+            if (b[i] !== undefined) out.push('<span class="add">+ ' + esc(b[i]) + '</span>');
         }
         box.innerHTML = out.length ? out.join('') : '<span class="same">没有改动</span>';
         box.classList.remove('hide');
     }
 
-    function esc(s) {
-        return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    /* ---------- 成员管理 ---------- */
+    function loadMembers() {
+        var isSuper = state.user && state.user.role === 'super';
+        api('/members').then(function (r) {
+            var list = r.members || [];
+            var box = $('userList');
+            $('userCount').textContent = list.length;
+            box.innerHTML = list.map(function (m) {
+                var role = m.role === 'super' ? '超管' : m.role === 'viewer' ? '只读' : '编辑';
+                var d = new Date(m.joined || Date.now());
+                var date = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+                var acts = isSuper && m.username !== state.user.username
+                    ? '<span class="mem-act" data-u="' + esc(m.username) + '" data-a="disable">停用</span>' +
+                      '<span class="mem-act" data-u="' + esc(m.username) + '" data-a="reset">改密</span>' +
+                      '<span class="mem-act danger" data-u="' + esc(m.username) + '" data-a="delete">删除</span>'
+                    : '';
+                return '<div class="mem-row"><b>' + esc(m.username) + '</b>' +
+                    '<em>' + role + '</em><span class="mem-date">' + date + '</span>' + acts + '</div>';
+            }).join('') || '<p class="adm-note">还没有成员</p>';
+            box.querySelectorAll('.mem-act').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    var u = el.dataset.u, a = el.dataset.a;
+                    if (a === 'reset') {
+                        var np = prompt('给 ' + u + ' 设置新密码（至少 6 位）');
+                        if (!np) return;
+                        api('/admin/password', { method: 'POST', body: { username: u, password: np } })
+                            .then(function (r) { log(r.message, 'ok'); alert(r.message); })
+                            .catch(function (e) { alert(e.message); });
+                        return;
+                    }
+                    if (a === 'delete' && !confirm('确定删除 ' + u + '？')) return;
+                    if (a === 'disable' && !confirm('确定停用 ' + u + '？')) return;
+                    api('/admin/status', { method: 'POST', body: { username: u, action: a } })
+                        .then(function (r) { log(r.message, 'ok'); loadMembers(); })
+                        .catch(function (e) { alert(e.message); });
+                });
+            });
+        }).catch(function (e) { log('读取成员失败：' + e.message, 'err'); });
+
+        if (!isSuper) return;
+        api('/admin/requests').then(function (r) {
+            state.requests = r.requests || [];
+            $('reqCount').textContent = state.requests.length;
+            var box = $('reqList');
+            box.innerHTML = state.requests.map(function (q) {
+                return '<div class="mem-row"><b>' + esc(q.username) + '</b>' +
+                    '<span class="mem-date">' + esc(q.reason || '未填写理由') + '</span>' +
+                    '<span class="mem-act ok" data-u="' + esc(q.username) + '" data-a="approve">批准</span>' +
+                    '<span class="mem-act danger" data-u="' + esc(q.username) + '" data-a="reject">拒绝</span></div>';
+            }).join('') || '<p class="adm-note">没有待审批的申请</p>';
+            box.querySelectorAll('.mem-act').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    api('/admin/approve', { method: 'POST', body: { username: el.dataset.u, action: el.dataset.a } })
+                        .then(function (r) { log(r.message, 'ok'); loadMembers(); })
+                        .catch(function (e) { alert(e.message); });
+                });
+            });
+        }).catch(function (e) { log('读取申请失败：' + e.message, 'err'); });
     }
 
-    function doSave() {
-        if (state.mode === 'local') {
-            msg('本地模式不能提交，请用「导出」或切到云端模式', 'err');
-            return;
-        }
-        var cfg = state.cfg;
-        if (!cfg || !state.current) { msg('请先连接并选择文件', 'err'); return; }
-        var parsed;
-        try { parsed = JSON.parse($('editor').value); } catch (e) { msg('语法错误，不能保存：' + e.message, 'err'); return; }
-        var body = {
-            message: '更新 ' + cfg.dir + '/' + state.current + '（' + (state.role === 'super' ? '超管' : '日常') + '提交）',
-            content: b64encode(JSON.stringify(parsed, null, 2)),
-            branch: cfg.branch
-        };
-        if (state.sha) body.sha = state.sha;
-        msg('提交中…');
-        $('btnSave').disabled = true;
-        api('/repos/' + cfg.repo + '/contents/' + cfg.dir + '/' + state.current, { method: 'PUT', body: body })
-            .then(function (res) {
-                var newSha = res && res.content && res.content.sha;
-                if (newSha) state.sha = newSha;
-                $('editorTitle').textContent = state.current + '　·　sha ' + (newSha || '').slice(0, 7);
-                state.original = $('editor').value;
-                msg('已提交仓库，还需部署才会上线', 'ok');
-                log('提交成功：' + state.current + ' · ' + ((res && res.commit && res.commit.sha) || '').slice(0, 7), 'ok');
-                return listCloud();
+    function doCreateUser() {
+        var u = $('newUser').value.trim().toLowerCase();
+        var p = $('newPass').value;
+        var role = $('newRole').value;
+        $('createHint').textContent = '创建中…';
+        api('/admin/create', { method: 'POST', body: { username: u, password: p, role: role } })
+            .then(function (r) {
+                $('createHint').textContent = r.message;
+                log(r.message, 'ok');
+                $('newUser').value = ''; $('newPass').value = '';
+                loadMembers();
             })
-            .catch(function (e) {
-                msg('提交失败：' + e.message, 'err');
-                log('提交失败：' + e.message, 'err');
-                if (e.status === 409) msg('文件已被他处修改，请重新加载后再改', 'err');
-                if (e.status === 403) msg('Token 没有写入权限（需要 Contents: Read and write）', 'err');
-            })
-            .then(function () { $('btnSave').disabled = false; });
+            .catch(function (e) { $('createHint').textContent = e.message; });
     }
 
-    /* ================= 初始化 ================= */
+    /* ---------- 标签页 ---------- */
+    function initTabs() {
+        document.querySelectorAll('.adm-tab').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.adm-tab').forEach(function (b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                var t = btn.dataset.tab;
+                hide($('pageData'), t !== 'data');
+                hide($('pageMembers'), t !== 'members');
+                hide($('pageLog'), t !== 'log');
+                if (t === 'members') loadMembers();
+            });
+        });
+    }
+
+    /* ---------- 初始化 ---------- */
     function init() {
         $('loginBtn').addEventListener('click', doLogin);
         $('loginPass').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
-        $('loginUser').addEventListener('keydown', function (e) { if (e.key === 'Enter') doLogin(); });
+        $('applyBtn').addEventListener('click', doApply);
+        $('altBtn').addEventListener('click', function () { showScreen('applyScreen'); });
+        $('backLogin').addEventListener('click', function () { showScreen('loginScreen'); });
         $('logoutBtn').addEventListener('click', doLogout);
+        $('btnCreate').addEventListener('click', doCreateUser);
 
-        $('srcLocal').addEventListener('click', function () { setMode('local'); });
-        $('srcCloud').addEventListener('click', function () { setMode('cloud'); });
-        $('btnLoadLocal').addEventListener('click', loadLocal);
-        $('btnExportAll').addEventListener('click', exportAll);
+        $('srcCloud').addEventListener('click', function () {
+            state.mode = 'cloud';
+            $('srcCloud').classList.add('active'); $('srcLocal').classList.remove('active');
+            $('srcNote').innerHTML = '云端模式直接读写仓库，保存后需要部署才会上线。';
+            state.current = null; $('editor').value = ''; $('editorTitle').textContent = '选择左侧文件';
+            loadFileList();
+        });
+        $('srcLocal').addEventListener('click', function () {
+            state.mode = 'local';
+            $('srcLocal').classList.add('active'); $('srcCloud').classList.remove('active');
+            $('srcNote').innerHTML = '本地快照只读，用于对照与导出，不能提交。';
+            state.current = null; $('editor').value = ''; $('editorTitle').textContent = '选择左侧文件';
+            loadFileList();
+        });
 
-        $('btnConnect').addEventListener('click', connect);
-        $('btnForget').addEventListener('click', function () {
-            try { localStorage.removeItem(CFG_KEY); } catch (e) {}
-            state.cfg = null;
-            $('cfgRepo').value = ''; $('cfgToken').value = '';
-            msg('已清除本机配置');
-        });
-        $('btnReload').addEventListener('click', function () {
-            if (state.mode === 'local') loadLocal();
-            else if (state.cfg) listCloud();
-        });
+        $('btnReload').addEventListener('click', loadFileList);
         $('btnFormat').addEventListener('click', doFormat);
         $('btnCheck').addEventListener('click', doCheck);
         $('btnDownload').addEventListener('click', doDownload);
         $('btnRevert').addEventListener('click', doRevert);
         $('btnDiff').addEventListener('click', doDiff);
         $('btnSave').addEventListener('click', doSave);
-
         document.addEventListener('keydown', function (e) {
             if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); doSave(); }
         });
 
-        setMode('local');
-        if (!restoreSession()) {
-            log('等待登录');
-        }
+        initTabs();
+        if (!restoreSession()) showScreen('loginScreen');
+        log('后台就绪');
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

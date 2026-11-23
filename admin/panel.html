@@ -4,26 +4,48 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>新雨社 · 数据后台</title>
-<link href="../assets/css/themes.css?v=20261123d" rel="stylesheet"/>
-<link href="../assets/css/admin.css?v=20261123d" rel="stylesheet"/>
-<script src="../assets/js/theme.js?v=20261123d"></script>
+<link href="../assets/css/themes.css?v=20261123e" rel="stylesheet"/>
+<link href="../assets/css/admin.css?v=20261123e" rel="stylesheet"/>
+<script src="../assets/js/theme.js?v=20261123e"></script>
 </head>
 <body>
 
-<!-- ═══ 登录（与 admin 彩蛋页同一视觉） ═══ -->
+<!-- ═══ 登录 ═══ -->
 <div class="login" id="loginScreen">
   <div class="login-tag">青 城 司 内 部 系 统</div>
   <div class="box" id="loginBox">
     <h1>新雨社数据后台</h1>
-    <p>授权人员专用 · 操作会记录在案</p>
+    <p id="loginSub">授权人员专用 · 操作会记录在案</p>
     <input type="text" id="loginUser" placeholder="管理员账号" autocomplete="username" spellcheck="false"/>
     <input type="password" id="loginPass" placeholder="请输入管理密码" autocomplete="current-password"/>
     <button id="loginBtn">登 录</button>
     <div class="login-err" id="loginErr"></div>
+    <div class="login-alt">
+      <span id="altText">还没有账号？</span>
+      <button class="linkbtn" id="altBtn" type="button">申请编辑权限</button>
+    </div>
   </div>
   <div class="login-foot">
-    新雨社枢密院 · 数据后台 v0.2<br>
-    双级权限 · 本地模式可用，云端模式需仓库授权
+    新雨社枢密院 · 数据后台 v0.3<br>
+    账号由超级管理员审批 · 首次登录请修改初始密码
+  </div>
+</div>
+
+<!-- ═══ 申请（同一卡片内切换） ═══ -->
+<div class="login hide" id="applyScreen">
+  <div class="login-tag">编 辑 权 限 申 请</div>
+  <div class="box" id="applyBox">
+    <h1>申请编辑权限</h1>
+    <p>提交后由超级管理员审批，通过后即可登录</p>
+    <input type="text" id="applyUser" placeholder="取一个账号（3–20 位小写字母/数字/下划线）" spellcheck="false"/>
+    <input type="password" id="applyPass" placeholder="设置密码（至少 6 位）"/>
+    <input type="text" id="applyReason" placeholder="申请理由（如：负责二十区日常维护）"/>
+    <button id="applyBtn">提 交 申 请</button>
+    <div class="login-err" id="applyErr"></div>
+    <div class="login-alt">
+      <span>已经有账号？</span>
+      <button class="linkbtn" id="backLogin" type="button">返回登录</button>
+    </div>
   </div>
 </div>
 
@@ -34,7 +56,7 @@
       <span class="adm-logo">雨</span>
       <div>
         <h1>数据后台</h1>
-        <p id="appSub">直接提交到 Git 仓库 · 保存后需部署生效</p>
+        <p id="appSub">云端编辑 · 保存后提交到仓库</p>
       </div>
     </div>
     <div class="adm-who">
@@ -43,87 +65,100 @@
     </div>
   </header>
 
-  <section class="adm-config">
-    <div class="adm-config-head">
-      <h2>数据源</h2>
-      <div class="adm-src-switch">
-        <button class="btn small active" id="srcLocal">本地模式</button>
-        <button class="btn small" id="srcCloud">云端仓库</button>
-      </div>
-    </div>
+  <nav class="adm-tabs">
+    <button class="adm-tab active" data-tab="data">数据编辑</button>
+    <button class="adm-tab" data-tab="members">成员管理</button>
+    <button class="adm-tab" data-tab="log">操作记录</button>
+  </nav>
 
-    <div id="paneLocal" class="adm-pane">
-      <p class="adm-note">
-        直接从当前站点读取 <code>data/*.json</code>，改完可导出下载。
-        不需要任何 Token，适合先改再上传。
+  <!-- 数据编辑 -->
+  <div class="adm-page" id="pageData">
+    <section class="adm-config">
+      <div class="adm-config-head">
+        <h2>数据源</h2>
+        <div class="adm-src-switch">
+          <button class="btn small active" id="srcCloud">云端（可提交）</button>
+          <button class="btn small" id="srcLocal">本地快照</button>
+        </div>
+      </div>
+      <p class="adm-note" id="srcNote">
+        云端模式直接读写仓库，保存后需要部署才会上线。<span id="tokenWarn"></span>
       </p>
-      <div class="adm-actions">
-        <button class="btn primary" id="btnLoadLocal">读取本地数据</button>
-        <button class="btn" id="btnExportAll">导出全部</button>
-        <span class="adm-hint" id="localHint"></span>
-      </div>
-    </div>
+    </section>
 
-    <div id="paneCloud" class="adm-pane hide">
+    <main class="adm-main">
+      <aside class="adm-files">
+        <h2>数据文件</h2>
+        <ul id="fileList"></ul>
+        <div class="adm-filefoot">
+          <button class="btn small" id="btnReload">重新加载</button>
+        </div>
+      </aside>
+
+      <section class="adm-editor">
+        <div class="adm-editor-head">
+          <h2 id="editorTitle">选择左侧文件</h2>
+          <div class="adm-editor-tools">
+            <button class="btn small" id="btnFormat">格式化</button>
+            <button class="btn small" id="btnCheck">校验</button>
+            <button class="btn small" id="btnDownload">导出</button>
+          </div>
+        </div>
+        <textarea id="editor" spellcheck="false" placeholder="左侧选择要编辑的文件"></textarea>
+        <pre class="adm-diff hide" id="diffBox"></pre>
+        <div class="adm-editor-foot">
+          <span class="adm-msg" id="editMsg"></span>
+          <div class="adm-editor-btns">
+            <button class="btn small hide" id="btnDiff">查看改动</button>
+            <button class="btn" id="btnRevert">还原</button>
+            <button class="btn primary" id="btnSave">保存并提交</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 成员管理 -->
+  <div class="adm-page hide" id="pageMembers">
+    <section class="adm-card">
+      <h2>待审批申请 <span class="cnt" id="reqCount">0</span></h2>
+      <div id="reqList" class="mem-list"><p class="adm-note">仅超级管理员可见</p></div>
+    </section>
+
+    <section class="adm-card hide" id="cardCreate">
+      <h2>直接下发账号</h2>
       <div class="adm-grid">
-        <label>仓库<small>形如 owner/repo</small>
-          <input id="cfgRepo" placeholder="yourname/xinyushe-official" spellcheck="false"/>
-        </label>
-        <label>分支
-          <input id="cfgBranch" placeholder="main" spellcheck="false"/>
-        </label>
-        <label class="wide">Token<small>需要 Contents 读写权限；只存在本机浏览器</small>
-          <input id="cfgToken" type="password" placeholder="github_pat_..." spellcheck="false"/>
-        </label>
-        <label>数据目录
-          <input id="cfgDir" placeholder="data" spellcheck="false"/>
+        <label>账号<input id="newUser" placeholder="小写字母/数字/下划线" spellcheck="false"/></label>
+        <label>密码<input id="newPass" placeholder="至少 6 位"/></label>
+        <label>角色
+          <select id="newRole">
+            <option value="editor">编辑（日常维护）</option>
+            <option value="viewer">只读</option>
+            <option value="super">超级管理员</option>
+          </select>
         </label>
       </div>
       <div class="adm-actions">
-        <button class="btn primary" id="btnConnect">连接并可读</button>
-        <button class="btn" id="btnForget">清除配置</button>
-        <span class="adm-hint" id="cfgHint"></span>
-      </div>
-    </div>
-  </section>
-
-  <main class="adm-main">
-    <aside class="adm-files">
-      <h2>数据文件</h2>
-      <ul id="fileList"></ul>
-      <div class="adm-filefoot">
-        <button class="btn small" id="btnReload">重新加载</button>
-      </div>
-    </aside>
-
-    <section class="adm-editor">
-      <div class="adm-editor-head">
-        <h2 id="editorTitle">选择左侧文件</h2>
-        <div class="adm-editor-tools">
-          <button class="btn small" id="btnFormat">格式化</button>
-          <button class="btn small" id="btnCheck">校验</button>
-          <button class="btn small" id="btnDownload">导出</button>
-        </div>
-      </div>
-      <textarea id="editor" spellcheck="false" placeholder="左侧选择要编辑的文件"></textarea>
-      <pre class="adm-diff hide" id="diffBox"></pre>
-      <div class="adm-editor-foot">
-        <span class="adm-msg" id="editMsg"></span>
-        <div class="adm-editor-btns">
-          <button class="btn small hide" id="btnDiff">查看改动</button>
-          <button class="btn" id="btnRevert">还原</button>
-          <button class="btn primary" id="btnSave">保存并提交</button>
-        </div>
+        <button class="btn primary" id="btnCreate">创建账号</button>
+        <span class="adm-hint" id="createHint"></span>
       </div>
     </section>
-  </main>
 
-  <section class="adm-log">
-    <h2>操作记录</h2>
-    <ol id="logList"></ol>
-  </section>
+    <section class="adm-card">
+      <h2>现有成员 <span class="cnt" id="userCount">0</span></h2>
+      <div id="userList" class="mem-list"></div>
+    </section>
+  </div>
+
+  <!-- 操作记录 -->
+  <div class="adm-page hide" id="pageLog">
+    <section class="adm-card">
+      <h2>操作记录</h2>
+      <ol id="logList"></ol>
+    </section>
+  </div>
 </div>
 
-<script src="../assets/js/admin.js?v=20261123d"></script>
+<script src="../assets/js/admin.js?v=20261123e"></script>
 </body>
 </html>

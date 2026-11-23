@@ -182,3 +182,49 @@ h1, h2 { font-family: var(--font-head); margin: 0; }
 .adm-diff .del { color: #a61b29; background: rgba(166,27,41,.08); display: block; }
 .adm-diff .same { color: var(--ink-muted); display: block; }
 .hide { display: none !important; }
+
+/* ═══════ v0.3 补充 ═══════ */
+.login-alt { margin-top: 14px; text-align: center; font-size: 12px; color: #5c5548; }
+.linkbtn {
+    background: none; border: none; padding: 0; margin-left: 4px;
+    color: #a61b29; font-size: 12px; cursor: pointer; text-decoration: underline;
+}
+.adm-tabs { display: flex; gap: 4px; padding: 0 20px; margin-top: 12px; border-bottom: 1px solid var(--border); }
+.adm-tab {
+    font: inherit; font-size: 13px; padding: 9px 16px; cursor: pointer;
+    background: none; border: none; border-bottom: 2px solid transparent;
+    color: var(--ink-secondary);
+}
+.adm-tab:hover { color: var(--seal); }
+.adm-tab.active { color: var(--seal); border-bottom-color: var(--seal); font-weight: 700; }
+.adm-page.hide { display: none; }
+.adm-card {
+    margin: 16px 20px 0; padding: 14px 16px;
+    background: var(--paper-card); border: 1px solid var(--border); border-radius: var(--radius-m);
+}
+.adm-card h2 { font-size: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.adm-card .cnt {
+    font-size: 11px; padding: 1px 8px; border-radius: 99px;
+    background: var(--seal-a10); color: var(--seal); font-weight: 400;
+}
+.mem-list { display: flex; flex-direction: column; gap: 6px; }
+.mem-row {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 8px 10px; border-radius: var(--radius-s); background: var(--paper);
+    font-size: 12.5px;
+}
+.mem-row b { color: var(--ink); }
+.mem-row em { font-style: normal; color: var(--ink-muted); font-size: 11px; }
+.mem-date { color: var(--ink-muted); font-size: 11.5px; flex: 1; min-width: 90px; }
+.mem-act {
+    font-size: 11.5px; padding: 2px 9px; border-radius: 99px; cursor: pointer;
+    border: 1px solid var(--border); color: var(--ink-secondary);
+}
+.mem-act:hover { border-color: var(--seal); color: var(--seal); }
+.mem-act.ok { border-color: var(--ok); color: var(--ok); }
+.mem-act.danger:hover { border-color: var(--seal); color: var(--seal); background: var(--seal-a06); }
+.adm-grid select {
+    font: inherit; font-size: 13px; padding: 7px 10px;
+    border: 1px solid var(--border); border-radius: var(--radius-s);
+    background: var(--paper); color: var(--ink);
+}

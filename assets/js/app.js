@@ -170,6 +170,7 @@ appData = {
             renderStaffPeople();
             renderCommonPeople();
             renderZones();
+            renderMembers();
             adaptMobileSidebar();
         }
         function renderOrgChart() {
@@ -525,6 +526,33 @@ appData = {
                 const statusClass = z.status === 'open' ? '' : z.status;
                 return `<div class="zone-item ${statusClass}" data-zone="${key}">${z.name.replace(/（.*）/g, '')}<br>${z.desc}</div>`;
             }).join('');
+        }
+        // 编辑成员：从 /api/members 拉取（后端不可用时静默隐藏）
+        function renderMembers() {
+            const box = document.getElementById('memberBox');
+            if (!box) return;
+            fetch('api/members').then(r => r.ok ? r.json() : null).then(d => {
+                const list = (d && d.members) || [];
+                const cnt = document.getElementById('memberCount');
+                if (cnt) cnt.textContent = list.length ? list.length + ' 位' : '暂无';
+                if (!list.length) {
+                    box.innerHTML = '<div class="loading-placeholder">暂无编辑成员，欢迎申请</div>';
+                    return;
+                }
+                const roleName = r => r === 'super' ? '超级管理员' : r === 'viewer' ? '只读' : '编辑';
+                box.innerHTML = list.map(m => {
+                    const d0 = new Date(m.joined || Date.now());
+                    const date = d0.getFullYear() + '-' + String(d0.getMonth() + 1).padStart(2, '0');
+                    return `<div class="mem-card tone-${m.role}">
+                        <span class="mem-avatar">${(m.username || '?').slice(0, 1).toUpperCase()}</span>
+                        <span class="mem-name">${m.username}</span>
+                        <span class="mem-role">${roleName(m.role)}</span>
+                        <span class="mem-since">${date} 加入</span>
+                    </div>`;
+                }).join('');
+            }).catch(() => {
+                box.innerHTML = '<div class="loading-placeholder">成员数据暂不可用</div>';
+            });
         }
         function adaptMobileSidebar() {
             if (window.innerWidth > 768) return;
