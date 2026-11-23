@@ -128,9 +128,11 @@
             ? '超级管理员 · 全部数据 + 成员审批'
             : (u.role === 'viewer' ? '只读成员 · 可查看不可保存' : '编辑 · 日常数据维护');
         log('登录成功：' + u.username + '（' + label + '）', 'ok');
-        if (u.role !== 'super') {
-            hide($('cardCreate'), true);
-        }
+        var isSuper = u.role === 'super';
+        hide($('cardCreate'), !isSuper);
+        hide($('cardRequests'), !isSuper);
+        var self = $('selfName');
+        if (self) self.textContent = u.username;
         loadFileList();
     }
 
@@ -314,11 +316,16 @@
                 var role = m.role === 'super' ? '超管' : m.role === 'viewer' ? '只读' : '编辑';
                 var d = new Date(m.joined || Date.now());
                 var date = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-                var acts = isSuper && m.username !== state.user.username
-                    ? '<span class="mem-act" data-u="' + esc(m.username) + '" data-a="disable">停用</span>' +
-                      '<span class="mem-act" data-u="' + esc(m.username) + '" data-a="reset">改密</span>' +
-                      '<span class="mem-act danger" data-u="' + esc(m.username) + '" data-a="delete">删除</span>'
-                    : '';
+                var isMe = m.username === state.user.username;
+                var acts = '';
+                if (isSuper) {
+                    acts += '<span class="mem-act" data-u="' + esc(m.username) + '" data-a="reset">改密</span>';
+                    if (!isMe) {
+                        acts += '<span class="mem-act" data-u="' + esc(m.username) + '" data-a="disable">停用</span>' +
+                                '<span class="mem-act danger" data-u="' + esc(m.username) + '" data-a="delete">删除</span>';
+                    }
+                }
+                if (isMe) acts = '<span class="mem-me">我</span>' + acts;
                 return '<div class="mem-row"><b>' + esc(m.username) + '</b>' +
                     '<em>' + role + '</em><span class="mem-date">' + date + '</span>' + acts + '</div>';
             }).join('') || '<p class="adm-note">还没有成员</p>';
@@ -363,6 +370,19 @@
         }).catch(function (e) { log('读取申请失败：' + e.message, 'err'); });
     }
 
+    function doSelfPassword() {
+        var p = $('selfPass').value;
+        if (!p || p.length < 6) { $('selfHint').textContent = '密码至少 6 位'; return; }
+        $('selfHint').textContent = '修改中…';
+        api('/admin/password', { method: 'POST', body: { username: state.user.username, password: p } })
+            .then(function (r) {
+                $('selfHint').textContent = '已修改，下次用新密码登录';
+                $('selfPass').value = '';
+                log('修改了自己的密码', 'ok');
+            })
+            .catch(function (e) { $('selfHint').textContent = e.message; });
+    }
+
     function doCreateUser() {
         var u = $('newUser').value.trim().toLowerCase();
         var p = $('newPass').value;
@@ -402,6 +422,7 @@
         $('backLogin').addEventListener('click', function () { showScreen('loginScreen'); });
         $('logoutBtn').addEventListener('click', doLogout);
         $('btnCreate').addEventListener('click', doCreateUser);
+        $('btnSelfPass').addEventListener('click', doSelfPassword);
 
         $('srcCloud').addEventListener('click', function () {
             state.mode = 'cloud';

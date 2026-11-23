@@ -228,3 +228,48 @@ h1, h2 { font-family: var(--font-head); margin: 0; }
     border: 1px solid var(--border); border-radius: var(--radius-s);
     background: var(--paper); color: var(--ink);
 }
+
+/* ═══════ v0.4：说明卡与操作提示 ═══════ */
+.card-note {
+    font-size: 12px; color: var(--ink-muted); line-height: 1.7;
+    margin: -4px 0 12px;
+}
+.mem-me {
+    font-size: 10.5px; padding: 1px 7px; border-radius: 99px;
+    background: var(--seal); color: var(--on-accent);
+}
+.adm-tab { position: relative; }
+.adm-tab::before {
+    content: '';
+    display: inline-block; width: 4px; height: 4px; border-radius: 50%;
+    background: var(--seal); opacity: 0; margin-right: 6px; vertical-align: middle;
+}
+.adm-tab.active::before { opacity: 1; }
+
+/* 说明页排版 */
+.guide h3 {
+    font-size: 14px; margin: 20px 0 10px; padding-left: 10px;
+    border-left: 3px solid var(--seal); color: var(--ink);
+}
+.guide h3:first-of-type { margin-top: 6px; }
+.guide p { font-size: 13px; line-height: 1.9; color: var(--ink-secondary); margin: 8px 0; }
+.guide-steps { margin: 8px 0; padding-left: 20px; }
+.guide-steps li { font-size: 13px; line-height: 2; color: var(--ink-secondary); }
+.guide-list { margin: 8px 0; padding-left: 20px; list-style: disc; }
+.guide-list li { font-size: 13px; line-height: 1.95; color: var(--ink-secondary); }
+.guide-table {
+    width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12.5px;
+}
+.guide-table th {
+    text-align: left; padding: 7px 10px; background: var(--seal-a06);
+    color: var(--seal); border: 1px solid var(--border); font-weight: 700;
+}
+.guide-table td {
+    padding: 7px 10px; border: 1px solid var(--border);
+    color: var(--ink-secondary); line-height: 1.7; vertical-align: top;
+}
+.guide code {
+    font-family: var(--font-mono); font-size: 11.5px;
+    background: var(--seal-a06); padding: 1px 5px; border-radius: 3px; color: var(--ink);
+}
+.guide b { color: var(--ink); }

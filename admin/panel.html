@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta name="robots" content="noindex,nofollow"/>
 <title>新雨社 · 数据后台</title>
-<link href="../assets/css/themes.css?v=20261123e" rel="stylesheet"/>
-<link href="../assets/css/admin.css?v=20261123e" rel="stylesheet"/>
-<script src="../assets/js/theme.js?v=20261123e"></script>
+<link href="../assets/css/themes.css?v=20261124a" rel="stylesheet"/>
+<link href="../assets/css/admin.css?v=20261124a" rel="stylesheet"/>
 </head>
 <body>
 
@@ -15,31 +15,31 @@
   <div class="login-tag">青 城 司 内 部 系 统</div>
   <div class="box" id="loginBox">
     <h1>新雨社数据后台</h1>
-    <p id="loginSub">授权人员专用 · 操作会记录在案</p>
+    <p>授权人员专用 · 操作会记录在案</p>
     <input type="text" id="loginUser" placeholder="管理员账号" autocomplete="username" spellcheck="false"/>
     <input type="password" id="loginPass" placeholder="请输入管理密码" autocomplete="current-password"/>
     <button id="loginBtn">登 录</button>
     <div class="login-err" id="loginErr"></div>
     <div class="login-alt">
-      <span id="altText">还没有账号？</span>
+      <span>还没有账号？</span>
       <button class="linkbtn" id="altBtn" type="button">申请编辑权限</button>
     </div>
   </div>
   <div class="login-foot">
-    新雨社枢密院 · 数据后台 v0.3<br>
-    账号由超级管理员审批 · 首次登录请修改初始密码
+    新雨社枢密院 · 数据后台 v0.4<br>
+    账号由超级管理员审批 · 操作均留痕
   </div>
 </div>
 
-<!-- ═══ 申请（同一卡片内切换） ═══ -->
+<!-- ═══ 申请 ═══ -->
 <div class="login hide" id="applyScreen">
   <div class="login-tag">编 辑 权 限 申 请</div>
   <div class="box" id="applyBox">
     <h1>申请编辑权限</h1>
     <p>提交后由超级管理员审批，通过后即可登录</p>
-    <input type="text" id="applyUser" placeholder="取一个账号（3–20 位小写字母/数字/下划线）" spellcheck="false"/>
-    <input type="password" id="applyPass" placeholder="设置密码（至少 6 位）"/>
-    <input type="text" id="applyReason" placeholder="申请理由（如：负责二十区日常维护）"/>
+    <input type="text" id="applyUser" placeholder="账号：3–20 位小写字母/数字/下划线" spellcheck="false"/>
+    <input type="password" id="applyPass" placeholder="密码：至少 6 位"/>
+    <input type="text" id="applyReason" placeholder="申请理由：例如「负责二十区日常维护」"/>
     <button id="applyBtn">提 交 申 请</button>
     <div class="login-err" id="applyErr"></div>
     <div class="login-alt">
@@ -55,7 +55,7 @@
     <div class="adm-brand">
       <span class="adm-logo">雨</span>
       <div>
-        <h1>数据后台</h1>
+        <h1>新雨社数据后台</h1>
         <p id="appSub">云端编辑 · 保存后提交到仓库</p>
       </div>
     </div>
@@ -65,13 +65,14 @@
     </div>
   </header>
 
-  <nav class="adm-tabs">
+  <nav class="adm-tabs" id="tabBar">
     <button class="adm-tab active" data-tab="data">数据编辑</button>
     <button class="adm-tab" data-tab="members">成员管理</button>
+    <button class="adm-tab" data-tab="guide">使用说明</button>
     <button class="adm-tab" data-tab="log">操作记录</button>
   </nav>
 
-  <!-- 数据编辑 -->
+  <!-- ─── 数据编辑 ─── -->
   <div class="adm-page" id="pageData">
     <section class="adm-config">
       <div class="adm-config-head">
@@ -82,7 +83,7 @@
         </div>
       </div>
       <p class="adm-note" id="srcNote">
-        云端模式直接读写仓库，保存后需要部署才会上线。<span id="tokenWarn"></span>
+        云端模式直接读写仓库；保存后需要部署才会上线。
       </p>
     </section>
 
@@ -91,7 +92,7 @@
         <h2>数据文件</h2>
         <ul id="fileList"></ul>
         <div class="adm-filefoot">
-          <button class="btn small" id="btnReload">重新加载</button>
+          <button class="btn small" id="btnReload">⟳ 重新加载</button>
         </div>
       </aside>
 
@@ -99,18 +100,18 @@
         <div class="adm-editor-head">
           <h2 id="editorTitle">选择左侧文件</h2>
           <div class="adm-editor-tools">
-            <button class="btn small" id="btnFormat">格式化</button>
-            <button class="btn small" id="btnCheck">校验</button>
-            <button class="btn small" id="btnDownload">导出</button>
+            <button class="btn small" id="btnFormat">≡ 格式化</button>
+            <button class="btn small" id="btnCheck">✓ 校验</button>
+            <button class="btn small" id="btnDownload">↓ 导出</button>
           </div>
         </div>
-        <textarea id="editor" spellcheck="false" placeholder="左侧选择要编辑的文件"></textarea>
+        <textarea id="editor" spellcheck="false" placeholder="从左侧选择一个文件开始编辑"></textarea>
         <pre class="adm-diff hide" id="diffBox"></pre>
         <div class="adm-editor-foot">
           <span class="adm-msg" id="editMsg"></span>
           <div class="adm-editor-btns">
-            <button class="btn small hide" id="btnDiff">查看改动</button>
-            <button class="btn" id="btnRevert">还原</button>
+            <button class="btn small hide" id="btnDiff">👁 查看改动</button>
+            <button class="btn" id="btnRevert">↺ 还原</button>
             <button class="btn primary" id="btnSave">保存并提交</button>
           </div>
         </div>
@@ -118,47 +119,115 @@
     </main>
   </div>
 
-  <!-- 成员管理 -->
+  <!-- ─── 成员管理 ─── -->
   <div class="adm-page hide" id="pageMembers">
-    <section class="adm-card">
+
+    <section class="adm-card" id="cardRequests">
       <h2>待审批申请 <span class="cnt" id="reqCount">0</span></h2>
-      <div id="reqList" class="mem-list"><p class="adm-note">仅超级管理员可见</p></div>
+      <p class="card-note">有人申请编辑权限时会出现在这里。批准后对方即可用自己设的密码登录。</p>
+      <div id="reqList" class="mem-list"><p class="adm-note">加载中…</p></div>
     </section>
 
-    <section class="adm-card hide" id="cardCreate">
+    <section class="adm-card" id="cardCreate">
       <h2>直接下发账号</h2>
+      <p class="card-note">不想走申请流程时，直接给对方建一个账号，把账号密码私下告诉他即可。</p>
       <div class="adm-grid">
-        <label>账号<input id="newUser" placeholder="小写字母/数字/下划线" spellcheck="false"/></label>
-        <label>密码<input id="newPass" placeholder="至少 6 位"/></label>
-        <label>角色
+        <label>账号<small>3–20 位小写字母 / 数字 / 下划线</small>
+          <input id="newUser" placeholder="例如 xiaoyu" spellcheck="false"/>
+        </label>
+        <label>初始密码<small>至少 6 位，建议让他登录后自己改</small>
+          <input id="newPass" placeholder="至少 6 位"/>
+        </label>
+        <label class="wide">角色
           <select id="newRole">
-            <option value="editor">编辑（日常维护）</option>
-            <option value="viewer">只读</option>
-            <option value="super">超级管理员</option>
+            <option value="editor">编辑 —— 可改公告、分区、人物、普查等日常数据</option>
+            <option value="viewer">只读 —— 只能看，不能保存</option>
+            <option value="super">超级管理员 —— 全部权限 + 审批他人</option>
           </select>
         </label>
       </div>
       <div class="adm-actions">
-        <button class="btn primary" id="btnCreate">创建账号</button>
+        <button class="btn primary" id="btnCreate">＋ 创建账号</button>
         <span class="adm-hint" id="createHint"></span>
+      </div>
+    </section>
+
+    <section class="adm-card" id="cardSelf">
+      <h2>修改我的密码</h2>
+      <p class="card-note">当前账号：<b id="selfName">—</b>。建议首次登录后立刻改掉初始密码。</p>
+      <div class="adm-grid">
+        <label>新密码<small>至少 6 位</small>
+          <input id="selfPass" placeholder="输入新密码"/>
+        </label>
+      </div>
+      <div class="adm-actions">
+        <button class="btn" id="btnSelfPass">修改我的密码</button>
+        <span class="adm-hint" id="selfHint"></span>
       </div>
     </section>
 
     <section class="adm-card">
       <h2>现有成员 <span class="cnt" id="userCount">0</span></h2>
+      <p class="card-note">编辑可改日常数据，只读只能查看。停用后立即无法登录，删除会连同记录一起移除。</p>
       <div id="userList" class="mem-list"></div>
     </section>
   </div>
 
-  <!-- 操作记录 -->
+  <!-- ─── 使用说明 ─── -->
+  <div class="adm-page hide" id="pageGuide">
+    <section class="adm-card guide">
+      <h2>三分钟上手</h2>
+
+      <h3>一、你是谁，能做什么</h3>
+      <table class="guide-table">
+        <tr><th>角色</th><th>能做什么</th></tr>
+        <tr><td>超级管理员</td><td>改全部数据、审批申请、下发账号、停用与删除成员</td></tr>
+        <tr><td>编辑</td><td>改公告、分区、人物、普查、FAQ、群入口等日常数据；史书与公报原文只读</td></tr>
+        <tr><td>只读</td><td>登录查看，不能保存任何修改</td></tr>
+      </table>
+
+      <h3>二、改一条公告（最常见）</h3>
+      <ol class="guide-steps">
+        <li>点上方 <b>数据编辑</b></li>
+        <li>左侧列表点 <code>news</code></li>
+        <li>中间编辑器里照着已有的格式改，每条是 <code>{"date":"2026-11-23","name":"标题"}</code></li>
+        <li>点 <b>✓ 校验</b>，看到「语法正确」才继续</li>
+        <li>点 <b>👁 查看改动</b> 确认只改了你想要的地方</li>
+        <li>点 <b>保存并提交</b></li>
+      </ol>
+
+      <h3>三、保存之后为什么网站没变</h3>
+      <p>保存是把数据提交到仓库，但站点是「直传部署」，还需要发布一次才上线。这一步由超级管理员执行，通常几分钟内完成。</p>
+
+      <h3>四、常见错误</h3>
+      <table class="guide-table">
+        <tr><th>提示</th><th>原因与处理</th></tr>
+        <tr><td>JSON 语法错误</td><td>多半是少了逗号或引号。点「↺ 还原」重来，或对照上一条的格式</td></tr>
+        <tr><td>该文件对当前角色只读</td><td>史书、公报原文属于档案，只有超管能改</td></tr>
+        <tr><td>提交失败：401</td><td>登录过期，退出重新登录</td></tr>
+        <tr><td>提交失败：403</td><td>账号被停用，联系超级管理员</td></tr>
+      </table>
+
+      <h3>五、几条规矩</h3>
+      <ul class="guide-list">
+        <li>只改自己负责的部分，别动别人正在写的内容</li>
+        <li>改完一定点「校验」，语法错的 JSON 会让整个板块打不开</li>
+        <li>不确定就先点「导出」备份一份，再改</li>
+        <li>所有提交都会记录账号与时间，可在「操作记录」里查</li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- ─── 操作记录 ─── -->
   <div class="adm-page hide" id="pageLog">
     <section class="adm-card">
-      <h2>操作记录</h2>
+      <h2>本次操作记录</h2>
+      <p class="card-note">只记录本机这次打开后台的操作；服务器端的提交记录在仓库的 commit 历史里。</p>
       <ol id="logList"></ol>
     </section>
   </div>
 </div>
 
-<script src="../assets/js/admin.js?v=20261123e"></script>
+<script src="../assets/js/admin.js?v=20261124a"></script>
 </body>
 </html>
