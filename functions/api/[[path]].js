@@ -93,6 +93,40 @@ async function ghApi(env, path, opts = {}) {
   return data;
 }
 
+/* ---------- 登录节流（按 IP） ---------- */
+const FAIL_WINDOW = 10 * 60;      // 10 分钟内累计
+const FAIL_LIMIT = 5;             // 5 次锁定
+const LOCK_SECONDS = 15 * 60;     // 锁 15 分钟
+
+function clientIp(request) {
+  return request.headers.get('CF-Connecting-IP')
+      || request.headers.get('X-Forwarded-For')
+      || 'unknown';
+}
+
+async function readFail(env, ip) {
+  const rec = await env.AUTH.get('fail:' + ip, 'json');
+  if (!rec) return { count: 0, locked: false, retry: 0 };
+  if (rec.lockedUntil && Date.now() < rec.lockedUntil) {
+    return { count: rec.count || 0, locked: true, retry: Math.ceil((rec.lockedUntil - Date.now()) / 1000) };
+  }
+  return { count: rec.count || 0, locked: false, retry: 0 };
+}
+
+async function bumpFail(env, ip) {
+  const key = 'fail:' + ip;
+  let rec = await env.AUTH.get(key, 'json') || { count: 0, first: Date.now() };
+  if (Date.now() - rec.first > FAIL_WINDOW * 1000) { rec.count = 0; rec.first = Date.now(); }
+  rec.count = (rec.count || 0) + 1;
+  rec.lockedUntil = rec.count >= FAIL_LIMIT ? Date.now() + LOCK_SECONDS * 1000 : 0;
+  await env.AUTH.put(key, JSON.stringify(rec), { expirationTtl: LOCK_SECONDS });
+  return { count: rec.count, locked: !!rec.lockedUntil, retry: rec.lockedUntil ? LOCK_SECONDS : 0 };
+}
+
+async function clearFail(env, ip) {
+  await env.AUTH.delete('fail:' + ip);
+}
+
 /* ---------- 业务 ---------- */
 async function handleRegister(ctx, body) {
   const { env } = ctx;
@@ -120,17 +154,38 @@ async function handleRegister(ctx, body) {
 
 async function handleLogin(ctx, body) {
   const { env } = ctx;
+  const ip = clientIp(ctx.request);
+  const gate = await readFail(env, ip);
+  if (gate.locked) {
+    return json({
+      ok: false,
+      error: '尝试次数过多，请 ' + Math.ceil(gate.retry / 60) + ' 分钟后再试',
+      locked: true,
+      retryAfter: gate.retry
+    }, 429);
+  }
   const username = String(body.username || '').trim().toLowerCase();
   const password = String(body.password || '');
   const user = await kvGet(env, 'user:' + username);
   if (!user) {
     const req = await kvGet(env, 'request:' + username);
     if (req && req.status === 'pending') return fail('申请尚在审批中', 403);
-    return fail('账号或密码不正确', 401);
+    const st = await bumpFail(env, ip);
+    return json({ ok: false, error: '账号或密码不正确', left: Math.max(0, FAIL_LIMIT - st.count) }, 401);
   }
-  if (user.status !== 'active') return fail('账号已被停用', 403);
+  if (user.status !== 'active') {
+    await bumpFail(env, ip);
+    return fail('账号已被停用', 403);
+  }
   const h = await hashPassword(password, user.salt);
-  if (h !== user.passHash) return fail('账号或密码不正确', 401);
+  if (h !== user.passHash) {
+    const st = await bumpFail(env, ip);
+    if (st.locked) {
+      return json({ ok: false, error: '尝试次数过多，已锁定 15 分钟', locked: true, retryAfter: st.retry }, 429);
+    }
+    return json({ ok: false, error: '账号或密码不正确', left: Math.max(0, FAIL_LIMIT - st.count) }, 401);
+  }
+  await clearFail(env, ip);
   const token = makeToken();
   const expires = Date.now() + 7 * 24 * 3600 * 1000;
   await kvPut(env, 'session:' + token, { username, expires }, 7 * 24 * 3600);
