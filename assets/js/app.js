@@ -171,6 +171,7 @@ appData = {
             renderCommonPeople();
             renderZones();
             renderMembers();
+            initEditLinks();
             adaptMobileSidebar();
         }
         function renderOrgChart() {
@@ -526,6 +527,18 @@ appData = {
                 const statusClass = z.status === 'open' ? '' : z.status;
                 return `<div class="zone-item ${statusClass}" data-zone="${key}">${z.name.replace(/（.*）/g, '')}<br>${z.desc}</div>`;
             }).join('');
+        }
+        // 维基式编辑入口：每个板块右上角挂一个「✎ 编辑」，直达后台对应文件
+        function initEditLinks() {
+            document.querySelectorAll('[data-edit]').forEach(function (card) {
+                if (card.querySelector('.edit-link')) return;
+                var a = document.createElement('a');
+                a.className = 'edit-link';
+                a.href = 'admin/panel.html?file=' + card.dataset.edit;
+                a.title = '编辑这一节（需登录）';
+                a.textContent = '✎ 编辑';
+                card.appendChild(a);
+            });
         }
         // 编辑成员：从 /api/members 拉取（后端不可用时静默隐藏）
         function renderMembers() {

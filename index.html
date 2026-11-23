@@ -156,7 +156,7 @@
 </div>
 </div>
 <div class="container" id="mainContainer">
-<div class="left-main"> <div class="card" id="stats">
+<div class="left-main"> <div class="card" id="stats" data-edit="site">
 <h2>全域数据总览 <span class="date-tag">数据截止 11月22日</span></h2>
 <div class="stat-grid">
 <div class="stat-cell">
@@ -188,7 +188,7 @@
 </ul>
 <p class="stat-note">统计口径说明：全域在册 17530 人为第十一次全域人口普查（数据截止 2026-11-22 夜间）加总口径——主编区序列 13969 人 ＋ 外部/接管序列 3561 人（姊妹群 454、特区 248、落日一群 983、历史时代3交流一群 996、德系群 275、联机群 436 与 169）。<br>普查的 20 个数值同样「跳过八区」，且「五区」拆为「五区」「五区2群」两格：一区 2991、二区 1366、三区 477、四区 469、五区 791、五区2群 138、六区 857、七区 1983、九区 1970，十至二十区依次为 113、144、122、129、482、604、192、245、113、268、515。<br>去重后社区人员 7287 人为 2026-08-26 口径（不含六区），本次普查未重新去重。原青城司已于 11 月 17 日并入枢密院，不再作为独立建制裁列。</p>
 </div>
-<div class="card" id="org-chart">
+<div class="card" id="org-chart" data-edit="org">
 <h2 id="org">组织架构图 · 11·17 建制重整后 <span class="date-tag" id="orgUpdated">数据截止 —</span></h2>
 <div class="org-meta">
 <span class="emergency-flag emergency-flag--settled" id="orgEmergencyFlag">紧急状态已终结 · 内部应急延续</span>
@@ -201,27 +201,27 @@
 <div class="org-legend" id="orgLegend"></div>
 <div class="org-notes" id="orgNotes"></div>
 </div>
-<div class="card" id="emergency">
+<div class="card" id="emergency" data-edit="emergency">
 <h2 id="emergency-h">治理状态看板 <span class="date-tag" id="emergencyUpdated">—</span></h2>
 <div class="gov-status" id="govStatus"></div>
 <p class="org-intro" id="emergencyLead">加载中…</p>
 <div class="es-grid" id="emergencyCards"></div>
 <div class="es-cols" id="emergencyCols"></div>
 </div>
-<div class="card" id="notice">
+<div class="card" id="notice" data-edit="news">
 <h2>全域公告 · 公文与决议</h2>
 <p class="news-order-hint" id="newsOrderHint">以下按发布日期由近及远排列</p>
 <ul class="news-list" id="newsList">
 <li class="loading-placeholder">加载中...</li>
 </ul>
 </div>
-<div class="card" id="timeline">
+<div class="card" id="timeline" data-edit="timeline">
 <h2 id="history">社群历史编年时间线</h2>
 <div class="timeline" id="timelineBox">
 <div class="loading-placeholder">加载中...</div>
 </div>
 </div>
-<div class="card" id="history-hall">
+<div class="card" id="history-hall" data-edit="history-volumes">
 <h2>社群历史馆 · 全本史料</h2>
 <p style="font-size:13px;color:var(--ink-secondary);margin-bottom:12px;line-height:1.7;font-family:'PingFang SC','Microsoft YaHei',sans-serif;">
                     收录《雨群编年体发展史（青城版 V1.48）》全文（增补至 2026 年 11 月 22 日），按原始卷次整理。每卷提供「对外版」与「全本原文」两种读法：对外版保留全部事实与时间，把人身攻讦式原话改为间接叙述；全本逐字不改。
@@ -245,13 +245,13 @@
 <div class="org-notes" id="surveysNotes"></div>
 </div>
 </div>
-<div class="card" id="mod">
+<div class="card" id="mod" data-edit="mod-list">
 <h2>MOD工程开发中心项目公示</h2>
 <ul class="news-list" id="modListBox">
 <li class="loading-placeholder">加载中...</li>
 </ul>
 </div>
-<div class="card" id="wiki">
+<div class="card" id="wiki" data-edit="wiki">
 <h2>社群百科 · 知识库</h2>
 <p style="font-size:13px;color:var(--ink-secondary);margin-bottom:12px;line-height:1.7;font-family:'PingFang SC','Microsoft YaHei',sans-serif;">
                     整合社群问答与规章制度，系统梳理基础概念、组织架构与专有名词，便于新老成员快速查阅。
@@ -276,13 +276,13 @@
 </div>
 <div id="wikiContentBox" style="margin-top:16px;"></div>
 </div>
-<div class="card" id="faq">
+<div class="card" id="faq" data-edit="faq">
 <h2>社群常见问题解答</h2>
 <div id="faqBox"></div>
 </div>
 </div>
 <div class="right-side">
-<div class="card" id="people">
+<div class="card" id="people" data-edit="people">
 <h2>核心管理层人物 <button class="collapse-btn" id="sideCollapseBtn">收起侧边</button></h2>
 <div class="people-grid" id="corePeopleBox"></div>
 </div>
@@ -303,11 +303,11 @@
 <h2>普通管理团队</h2>
 <div class="people-grid" id="commonPeopleBox"></div>
 </div>
-<div class="card" id="zones">
+<div class="card" id="zones" data-edit="zones">
 <h2>雨群分区快速入口</h2>
 <div class="zone-grid" id="zonesBox"></div>
 </div>
-<div class="card" id="groups">
+<div class="card" id="groups" data-edit="groups">
 <h2 id="groups-h">接管与互宣群聊 · 开放入口</h2>
 <p class="org-intro" id="groupsLead">加载中…</p>
 <div id="groupsTakenover"></div>

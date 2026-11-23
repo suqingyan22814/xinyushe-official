@@ -134,6 +134,25 @@
         var self = $('selfName');
         if (self) self.textContent = u.username;
         loadFileList();
+        openFromQuery();
+    }
+
+    // 主页「✎ 编辑」跳转过来时自动打开对应文件
+    function openFromQuery() {
+        var file = null;
+        try { file = new URLSearchParams(location.search).get('file'); } catch (e) {}
+        if (!file) return;
+        var key = String(file).replace(/\.json$/, '');
+        if (FILE_LIST.indexOf(key) < 0) return;
+        setTimeout(function () {
+            var role = state.user && state.user.role;
+            if (role !== 'super' && DAILY_ALLOW.indexOf(key) < 0) {
+                log('该文件对当前角色只读：' + key, 'err');
+                return;
+            }
+            openFile(key);
+            log('从主页跳转，已打开 ' + key, 'ok');
+        }, 240);
     }
 
     function doLogout() {
