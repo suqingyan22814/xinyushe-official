@@ -1,0 +1,60 @@
+{
+  "updated": "2026-11-23",
+  "groups": [
+    {
+      "key": "steel",
+      "type": "takenover",
+      "typeLabel": "接管 · 特区",
+      "name": "【雨】钢铁雄心/文明时代综合交流群",
+      "desc": "钢铁雄心特区 · 紧急状态期间筹建",
+      "note": "2026-10-11 因钢铁雄心等模组全面封禁造成冲击而开始筹建，10-16 以「特区 AI 接入并测试」方式正式建立。",
+      "url": "https://qun.qq.com/universal-share/share?ac=1&authKey=uavaQABktlSz%2BZGaFYPc3QrccEOPyerWXt7EYB9TCyJAzMEEmZHFKkikz7L6N3qu&busi_data=eyJncm91cENvZGUiOiIxMTMwNDcwMjczIiwidG9rZW4iOiJjTHpQdUR6YjRNaloxbkRSd3VkRzlwTjd6MVgxbk0xOFErTjEvQ1hUUnRNMjFiNjVKRUxmMG9kTHJULytPUHlHIiwidWluIjoiMjkyNjM4MjEwOCJ9&data=Pjzn8wfbhDpd0zHRP9iBVkJe0qc5iMngD4ATye89erlIqTZu1TwfPo3B-MRQnZVypPw08kWrEVynjo0uUrQL2w&svctype=4&tempid=h5_group_info"
+    },
+    {
+      "key": "his3",
+      "type": "takenover",
+      "typeLabel": "接管 · 新并入",
+      "name": "历史时代3交流一群",
+      "desc": "2026-10-31 晚确定交由新雨社发展",
+      "note": "10-31 晚间确定交由新雨社（雨群）发展；因具体归口尚未商讨，暂以管理机构总体名称「新雨社」列示，未编入具体编区。",
+      "url": "https://qun.qq.com/universal-share/share?ac=1&authKey=R3cGrxhm%2B9PLfpXEPsWm18RQCWmdTYEO5Rsb9paSlcAUxZS90lmScFiws0digGh%2B&busi_data=eyJncm91cENvZGUiOiIxMDEzMjY1MzYzIiwidG9rZW4iOiJxa0FodHQvcFQzR0FuaExzNHpIcTlsV2RWVktvbTdhTmt4TFB4aXB3RFliNWJnandJYTdiM0xVSTJyeUpvMTlNIiwidWluIjoiMjkyNjM4MjEwOCJ9&data=chlcyDtY0LJ8Ql1X9zSld8XFyU4e4iWXGGmSHcjlnHtQlAd2XFeLUMGH-zP9SWbXgqfEqvNSma6PBj6Blwan-w&svctype=4&tempid=h5_group_info"
+    },
+    {
+      "key": "sunset",
+      "type": "takenover",
+      "typeLabel": "接管 · 制作组",
+      "name": "✪『无』文明时代2/3『落日制作组①群 / 综合交流群』",
+      "desc": "枢密院 · 统筹院托管 · 983 人",
+      "note": "原由青城司与枢机秘务紧急委员会接管；11 月 17 日建制重整后由枢密院统辖、统筹院代管。",
+      "url": "https://qun.qq.com/universal-share/share?ac=1&authKey=iDaMjocbBFapasnExlhIY8z0oDGKEO%2BfxUsftX8Chh483iq5%2BcIp5aPUgxyCqid2&busi_data=eyJncm91cENvZGUiOiI2MjExNjU2MTgiLCJ0b2tlbiI6IjU1UmhVVVJuZFBDTmIrQUdIelN0clhLK0F6dVIzUFBXZFdkZVlxdFBYRnpwVnpzY3BBUTg5cmp0UmpSR1pTTysiLCJ1aW4iOiIyOTI2MzgyMTA4In0%3D&data=j54O6adVMTEWXhhGEQRclOVvLbcnc_dCAKV1sRf8kL0nws8QVG-vIHbQXKoNiEQziR2cYxPgxx7NG4KMIh7IcQ&svctype=4&tempid=h5_group_info"
+    },
+    {
+      "key": "lianji_a",
+      "type": "takenover",
+      "typeLabel": "新并入 · 联机",
+      "name": "【雨】文明时代◎联机群（其一）",
+      "desc": "第十一次普查 436 人 · 11 月加入",
+      "note": "群号 107705258。经统筹院→枢密院逐级上呈靖枢堂讨论后以单独体系加入，至 11 月 23 日尚无正式协定文本。",
+      "url": "https://qun.qq.com/universal-share/share?ac=1&authKey=buc4jGECCq9HKO%2FWtCsKuhOJDz28xmsdE729hYvAgU8sNp%2FiE7YwgcM%2BC8PCAMBM&busi_data=eyJncm91cENvZGUiOiIxMDc3MDUyNTgiLCJ0b2tlbiI6ImZqZDVWWTliT2ZyTlFvdHlLOW9NekZDTzRLaXVUWU14dlJSNUQzbEwybnZiTm9mZ3RkWDYwOEZwRTd0NDg5elkiLCJ1aW4iOiIyOTI2MzgyMTA4In0%3D&data=7gKznnwm3jrGBZwJACYQ91uwaY1FGldyv3p4BrH5jIKDRMBWBjNUW-dTTDlrxfUIKVfC22OIVft86T_ehnjMKw&svctype=4&tempid=h5_group_info"
+    },
+    {
+      "key": "lianji_b",
+      "type": "takenover",
+      "typeLabel": "新并入 · 联机",
+      "name": "【雨】文明时代◎联机群（其二）",
+      "desc": "第十一次普查 169 人 · 11 月加入",
+      "note": "群号 799767625。与「其一」同属联机体系，同批经靖枢堂讨论后加入。",
+      "url": "https://qun.qq.com/universal-share/share?ac=1&authKey=aopekDYOwz3qMEirNWoWfrT9sIxolUGMBheE%2FlBHm015%2Fy4pcMZJujVZjfK6wtWs&busi_data=eyJncm91cENvZGUiOiI3OTk3Njc2MjUiLCJ0b2tlbiI6IlpZUnUvU0VzVjRmdmZXeEJYZ0JwNGtoNTYxNGJxSnhybHRoeHVnTGZaZ3Q5RTh6bjZuSFNuQ1pxSEdlVVR3Uk8iLCJ1aW4iOiIyOTI2MzgyMTA4In0%3D&data=R401gIv8SQpyjax1iY8FcD3Vpxh_YP-geFxrdFzq_SrmwRANiPk2WgXduH4HkZnq_ACZmpUyGm_EvuXQfARyLA&svctype=4&tempid=h5_group_info"
+    },
+    {
+      "key": "dexi",
+      "type": "takenover",
+      "typeLabel": "新并入 · 德系",
+      "name": "【德】文明时代2/历史时代3交流群",
+      "desc": "德系群 · 第十一次普查 275 人",
+      "note": "群号 821942385。11 月加入，按单独体系列于外部/接管序列。",
+      "url": "https://qun.qq.com/universal-share/share?ac=1&authKey=aTCRaxMxsLkIasBqgi%2FNzpQrd35s9MoN%2B6VZZ7d0q1cOpeCThdFcadptskfDpIL2&busi_data=eyJncm91cENvZGUiOiI4MjE5NDIzODUiLCJ0b2tlbiI6Ii9OMFZNL1ljL1hCZnRGK1dPd3lMQ3ZVL3VMemNiSUJTcmxRY2Y2eWVIeDdVdHJxeUJISmxLMU0xNndySnh0R1oiLCJ1aW4iOiIyOTI2MzgyMTA4In0%3D&data=RizQynpu7a9y_QJKoO4zdouMWxIckXkv7yUFopoSD-rDxoCdPwGhSgFzdsT9dR7-KO6KoX-1_PdFrDsr1VEaiA&svctype=4&tempid=h5_group_info"
+    }
+  ],
+  "note": "原 7 个对外互宣群系（文明时代联机会体系 4 个、紫荆花体系 3 个）已于 2026-11-08 随文明评议会（联机圈）解散而全部失效，不再列示。11 月新加入的两个联机群与德系群已列于接管卡内。"
+}

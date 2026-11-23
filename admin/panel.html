@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-style="seal" data-scheme="light" data-size="md" data-motion="on">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>新雨社 · 数据后台</title>
+<link href="../assets/css/themes.css?v=20261123d" rel="stylesheet"/>
+<link href="../assets/css/admin.css?v=20261123d" rel="stylesheet"/>
+<script src="../assets/js/theme.js?v=20261123d"></script>
+</head>
+<body>
+
+<!-- ═══ 登录（与 admin 彩蛋页同一视觉） ═══ -->
+<div class="login" id="loginScreen">
+  <div class="login-tag">青 城 司 内 部 系 统</div>
+  <div class="box" id="loginBox">
+    <h1>新雨社数据后台</h1>
+    <p>授权人员专用 · 操作会记录在案</p>
+    <input type="text" id="loginUser" placeholder="管理员账号" autocomplete="username" spellcheck="false"/>
+    <input type="password" id="loginPass" placeholder="请输入管理密码" autocomplete="current-password"/>
+    <button id="loginBtn">登 录</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+  <div class="login-foot">
+    新雨社枢密院 · 数据后台 v0.2<br>
+    双级权限 · 本地模式可用，云端模式需仓库授权
+  </div>
+</div>
+
+<!-- ═══ 主界面 ═══ -->
+<div class="app hide" id="appRoot">
+  <header class="adm-top">
+    <div class="adm-brand">
+      <span class="adm-logo">雨</span>
+      <div>
+        <h1>数据后台</h1>
+        <p id="appSub">直接提交到 Git 仓库 · 保存后需部署生效</p>
+      </div>
+    </div>
+    <div class="adm-who">
+      <span class="role-badge" id="roleBadge">—</span>
+      <button class="btn small" id="logoutBtn">退出</button>
+    </div>
+  </header>
+
+  <section class="adm-config">
+    <div class="adm-config-head">
+      <h2>数据源</h2>
+      <div class="adm-src-switch">
+        <button class="btn small active" id="srcLocal">本地模式</button>
+        <button class="btn small" id="srcCloud">云端仓库</button>
+      </div>
+    </div>
+
+    <div id="paneLocal" class="adm-pane">
+      <p class="adm-note">
+        直接从当前站点读取 <code>data/*.json</code>，改完可导出下载。
+        不需要任何 Token，适合先改再上传。
+      </p>
+      <div class="adm-actions">
+        <button class="btn primary" id="btnLoadLocal">读取本地数据</button>
+        <button class="btn" id="btnExportAll">导出全部</button>
+        <span class="adm-hint" id="localHint"></span>
+      </div>
+    </div>
+
+    <div id="paneCloud" class="adm-pane hide">
+      <div class="adm-grid">
+        <label>仓库<small>形如 owner/repo</small>
+          <input id="cfgRepo" placeholder="yourname/xinyushe-official" spellcheck="false"/>
+        </label>
+        <label>分支
+          <input id="cfgBranch" placeholder="main" spellcheck="false"/>
+        </label>
+        <label class="wide">Token<small>需要 Contents 读写权限；只存在本机浏览器</small>
+          <input id="cfgToken" type="password" placeholder="github_pat_..." spellcheck="false"/>
+        </label>
+        <label>数据目录
+          <input id="cfgDir" placeholder="data" spellcheck="false"/>
+        </label>
+      </div>
+      <div class="adm-actions">
+        <button class="btn primary" id="btnConnect">连接并可读</button>
+        <button class="btn" id="btnForget">清除配置</button>
+        <span class="adm-hint" id="cfgHint"></span>
+      </div>
+    </div>
+  </section>
+
+  <main class="adm-main">
+    <aside class="adm-files">
+      <h2>数据文件</h2>
+      <ul id="fileList"></ul>
+      <div class="adm-filefoot">
+        <button class="btn small" id="btnReload">重新加载</button>
+      </div>
+    </aside>
+
+    <section class="adm-editor">
+      <div class="adm-editor-head">
+        <h2 id="editorTitle">选择左侧文件</h2>
+        <div class="adm-editor-tools">
+          <button class="btn small" id="btnFormat">格式化</button>
+          <button class="btn small" id="btnCheck">校验</button>
+          <button class="btn small" id="btnDownload">导出</button>
+        </div>
+      </div>
+      <textarea id="editor" spellcheck="false" placeholder="左侧选择要编辑的文件"></textarea>
+      <pre class="adm-diff hide" id="diffBox"></pre>
+      <div class="adm-editor-foot">
+        <span class="adm-msg" id="editMsg"></span>
+        <div class="adm-editor-btns">
+          <button class="btn small hide" id="btnDiff">查看改动</button>
+          <button class="btn" id="btnRevert">还原</button>
+          <button class="btn primary" id="btnSave">保存并提交</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="adm-log">
+    <h2>操作记录</h2>
+    <ol id="logList"></ol>
+  </section>
+</div>
+
+<script src="../assets/js/admin.js?v=20261123d"></script>
+</body>
+</html>

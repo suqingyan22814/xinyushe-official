@@ -2,122 +2,467 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>新雨社管理后台</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="新雨社青城司内部管理工具（已撤编）">
+<title>新雨社管理后台 · 登录</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23a61b29'/%3E%3Ctext x='50' y='70' font-size='58' text-anchor='middle' fill='%23fffdf7' font-family='serif'%3E雨%3C/text%3E%3C/svg%3E">
 <style>
-body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f0e6;margin:0;color:#2b2620}
-.login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#5c0f18 0%,#a61b29 100%)}
-.box{background:#fffdf7;padding:40px;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,0.3);width:360px}
-.box h1{font-size:22px;color:#a61b29;margin-bottom:8px;text-align:center}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden}
+body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#111}
+
+/* ============ 第一幕：登录 ============ */
+.login{
+  position:fixed;inset:0;z-index:10;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#4a0c13 0%,#8f1622 100%);
+  transition:opacity .5s;
+}
+.login.hide,.police.hide,.notice.hide{display:none}
+.login-tag{
+  position:absolute;top:24px;left:0;right:0;text-align:center;
+  font-size:11px;color:rgba(255,255,255,.45);letter-spacing:5px;
+}
+.login-foot{
+  position:absolute;bottom:20px;left:0;right:0;text-align:center;
+  font-size:11px;color:rgba(255,255,255,.4);letter-spacing:1px;line-height:1.8;
+}
+.box{background:#fffdf7;padding:40px;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.35);width:360px;max-width:90vw;position:relative}
+.box.shake{animation:boxShake .3s ease}
+@keyframes boxShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.box h1{font-size:22px;color:#a61b29;margin-bottom:8px;text-align:center;letter-spacing:2px}
 .box p{font-size:13px;color:#5c5548;margin-bottom:24px;text-align:center}
-.box input{width:100%;padding:12px 16px;border:1px solid #e3d9bf;border-radius:4px;font-size:14px;margin-bottom:16px;background:#fff}
-.box button{width:100%;padding:12px;background:#a61b29;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer}
+.box input{width:100%;padding:12px 16px;border:1px solid #e3d9bf;border-radius:4px;font-size:14px;margin-bottom:14px;background:#fff;color:#2b2620;outline:none;transition:border-color .2s}
+.box input:focus{border-color:#a61b29}
+.box input::placeholder{color:#b8ae97}
+.box button{width:100%;padding:12px;background:#a61b29;color:#fff;border:none;border-radius:4px;font-size:15px;cursor:pointer;letter-spacing:4px;transition:background .2s}
 .box button:hover{background:#7d1420}
-.error{color:#a61b29;font-size:13px;margin-bottom:12px;display:none}
-.admin{display:none;min-height:100vh}
-.header{background:#5c0f18;color:#f3e6c8;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
-.header h2{font-size:18px}
-.header button{background:transparent;color:#f3e6c8;border:1px solid #f3e6c8;padding:6px 16px;border-radius:4px;cursor:pointer;font-size:13px}
-.main{display:flex;height:calc(100vh - 60px)}
-.sidebar{width:200px;background:#fffdf7;border-right:1px solid #e3d9bf;padding:16px 0;overflow-y:auto}
-.sidebar button{display:block;width:100%;padding:10px 20px;border:none;background:transparent;text-align:left;font-size:14px;cursor:pointer;color:#2b2620;font-family:inherit}
-.sidebar button:hover{background:#f5f0e6}
-.sidebar button.active{background:#a61b29;color:#fff}
-.content{flex:1;padding:24px;overflow-y:auto}
-.card{background:#fffdf7;border:1px solid #e3d9bf;border-radius:6px;padding:20px;margin-bottom:20px}
-.card h3{font-size:16px;color:#a61b29;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #e3d9bf}
-textarea{width:100%;height:400px;font-family:"Consolas","Courier New",monospace;font-size:13px;padding:12px;border:1px solid #e3d9bf;border-radius:4px;background:#faf8f3;resize:vertical;line-height:1.6}
-.actions{margin-top:16px;display:flex;gap:12px}
-.actions button{padding:10px 24px;border:none;border-radius:4px;font-size:14px;cursor:pointer;font-family:inherit}
-.btn-save{background:#a61b29;color:#fff}
-.btn-save:hover{background:#7d1420}
-.btn-export{background:#b8933f;color:#fff}
-.btn-export:hover{background:#9a7a32}
-.btn-reset{background:#e3d9bf;color:#2b2620}
-.btn-reset:hover{background:#d4c9af}
-.status{background:#f5f0e6;border-top:1px solid #e3d9bf;padding:12px 24px;font-size:13px;color:#5c5548}
-.status span{margin-right:24px}
-.log-panel{background:#fffdf7;border:1px solid #e3d9bf;border-radius:6px;padding:20px}
-.log-panel h3{font-size:16px;color:#a61b29;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid #e3d9bf}
-.log-list{max-height:300px;overflow-y:auto}
-.log-item{padding:8px 12px;border-bottom:1px dashed #e3d9bf;font-size:13px;font-family:"Consolas","Courier New",monospace}
+.box button:disabled{background:#a97b81;cursor:default}
+
+/* ============ 第二幕：站务处置警示 ============ */
+.police{
+  position:fixed;inset:0;z-index:20;display:none;
+  background:#0d0d0d;color:#eaeaea;padding:24px;text-align:center;
+}
+.police.show{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.police-bar{
+  position:absolute;top:0;left:0;right:0;height:6px;
+  background:repeating-linear-gradient(90deg,#d81e06 0 40px,#b30f00 40px 80px);
+}
+.police-head{
+  position:absolute;top:22px;left:0;right:0;
+  padding:10px 16px;background:rgba(216,30,6,.12);border-bottom:1px solid rgba(216,30,6,.35);
+  font-size:12px;letter-spacing:2px;color:#ff5a44;
+  animation:blink 1.6s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.55}}
+.police-inner{margin-top:60px}
+.police-icon{width:74px;height:74px;margin:0 auto 22px}
+.police-icon svg{width:100%;height:100%;filter:drop-shadow(0 0 18px rgba(216,30,6,.55))}
+.police h1{font-size:clamp(26px,5vw,38px);letter-spacing:10px;color:#ff3b22;margin-bottom:26px;font-weight:800}
+.police p{font-size:15px;line-height:2;color:#cfcfcf;max-width:560px;margin:0 auto}
+.police p b{color:#fff}
+.police .org{margin:18px 0 8px;font-size:14px;color:#999}
+.police .org b{color:#eaeaea;font-size:16px}
+.police-list{
+  margin:22px auto 0;padding:16px 28px;text-align:left;
+  border:1px solid rgba(216,30,6,.4);background:rgba(216,30,6,.07);
+  font-size:13px;line-height:2;color:#d8d8d8;max-width:560px;
+}
+.police-list h2{font-size:13px;color:#ff3b22;letter-spacing:3px;font-weight:700;margin-bottom:6px;text-align:center}
+.police-count{margin-top:26px;font-size:15px;color:#aaa}
+.police-count b{
+  display:inline-block;font-size:34px;color:#ff3b22;
+  font-family:Consolas,monospace;margin:0 6px;vertical-align:middle;
+  animation:blink 1s ease-in-out infinite;
+}
+.police-progress{
+  width:min(560px,86vw);height:4px;background:#222;margin:16px auto 0;border-radius:2px;overflow:hidden;
+}
+.police-progress i{
+  display:block;height:100%;background:linear-gradient(90deg,#ff3b22,#ff7a3c);
+  width:100%;transition:width 6s linear;
+}
+.police-foot{
+  position:absolute;bottom:14px;left:0;right:0;text-align:center;
+  font-size:11px;color:#555;letter-spacing:1px;line-height:1.9;padding:0 16px;
+}
+.police-foot em{font-style:normal;color:#4a4a4a}
+
+/* ============ 第三幕：撤编通告 ============ */
+.notice{
+  position:fixed;inset:0;z-index:30;display:none;
+  background:#8d857a;
+  padding:36px 16px 60px;
+  overflow-y:auto;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(0,0,0,.15) 0, transparent 45%),
+    radial-gradient(circle at 85% 90%, rgba(0,0,0,.18) 0, transparent 50%);
+}
+.notice.show{display:block}
+.paper{
+  max-width:660px;margin:0 auto;background:#fffdf7;
+  padding:54px 52px 34px;position:relative;
+  box-shadow:0 20px 60px rgba(0,0,0,.45);
+  background-image:repeating-linear-gradient(180deg,rgba(120,90,40,.028) 0,rgba(120,90,40,.028) 1px,transparent 1px,transparent 28px);
+  animation:paperIn .6s ease-out;
+}
+@keyframes paperIn{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+.doc-brand{
+  text-align:center;color:#a61b29;font-size:32px;font-weight:900;
+  letter-spacing:14px;font-family:"Songti SC","SimSun",serif;
+  text-indent:14px;
+}
+.doc-brand-sub{
+  text-align:center;font-size:11px;color:#a61b29;letter-spacing:6px;
+  margin-top:8px;opacity:.8;font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+}
+.doc-rule{height:3px;background:#a61b29;margin:16px 0 0}
+.doc-no{text-align:center;font-size:13px;color:#5c5548;margin:16px 0 36px;letter-spacing:2px;font-family:"FangSong","STFangsong",serif}
+.doc-title{
+  text-align:center;font-size:22px;font-weight:700;color:#2b2620;
+  font-family:"Songti SC","SimSun",serif;margin-bottom:32px;letter-spacing:2px;line-height:1.7;
+}
+.doc-recv{
+  font-size:15px;color:#2b2620;margin-bottom:16px;
+  font-family:"FangSong","STFangsong",serif;letter-spacing:.5px;
+}
+.doc-body p{font-size:15.5px;line-height:2.05;color:#2b2620;text-indent:2em;margin-bottom:12px;font-family:"FangSong","STFangsong",serif}
+.doc-body h3{
+  font-size:15.5px;color:#2b2620;font-weight:700;margin:22px 0 8px;text-indent:2em;
+  font-family:"FangSong","STFangsong",serif;
+}
+.doc-body p b{font-weight:700}
+.doc-end{
+  font-size:15.5px;color:#2b2620;text-indent:2em;margin:20px 0 0;
+  font-family:"FangSong","STFangsong",serif;line-height:2.05;
+}
+.doc-attach{
+  margin-top:26px;font-size:14px;color:#5c5548;
+  font-family:"FangSong","STFangsong",serif;letter-spacing:1px;
+}
+.doc-sign{
+  margin-top:34px;text-align:right;font-size:16px;line-height:2.2;color:#2b2620;
+  font-family:"Songti SC","SimSun",serif;position:relative;
+  padding-right:150px;
+}
+.seal{
+  position:absolute;right:-14px;bottom:-10px;width:128px;height:128px;
+  cursor:pointer;user-select:none;
+  transition:transform .25s ease;
+  transform:rotate(-9deg);
+}
+.seal:hover{transform:rotate(-9deg) scale(1.06)}
+.seal.shake{animation:sealShake .35s ease}
+@keyframes sealShake{
+  0%,100%{transform:rotate(-9deg)}
+  30%{transform:rotate(-4deg) scale(1.12)}
+  60%{transform:rotate(-14deg) scale(.95)}
+}
+.doc-foot{
+  margin-top:40px;padding-top:12px;border-top:1px solid #d8ccb0;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font-size:12px;color:#8a7c5f;letter-spacing:1px;
+  font-family:"FangSong","STFangsong",serif;
+}
+.doc-ps{
+  margin-top:22px;padding-top:14px;border-top:1px dashed #cbbd9d;
+  font-size:12px;color:#8a7c5f;text-align:center;letter-spacing:1px;line-height:2;
+}
+
+/* ============ 彩蛋层 ============ */
+.secret{
+  position:fixed;inset:0;z-index:50;display:none;
+  background:rgba(12,10,6,.92);
+  align-items:center;justify-content:center;padding:20px;
+}
+.secret.show{display:flex}
+.secret-card{
+  max-width:600px;width:100%;background:#1a1610;color:#e8dcc0;
+  border:1px solid #6b5a2e;border-radius:4px;padding:34px 30px;
+  box-shadow:0 24px 70px rgba(0,0,0,.7);
+  animation:paperIn .4s ease-out;
+  max-height:82vh;overflow-y:auto;
+}
+.secret-top{
+  text-align:center;color:#d8b35a;border-bottom:1px solid #6b5a2e;
+  padding-bottom:12px;margin-bottom:20px;
+}
+.secret-top h2{font-size:20px;letter-spacing:6px;font-family:"Songti SC","SimSun",serif}
+.secret-top p{font-size:12px;margin-top:8px;letter-spacing:2px;color:#a08b55}
+.secret-item{margin-bottom:18px;font-size:14px;line-height:1.9}
+.secret-item h4{color:#d8b35a;font-size:15px;font-family:"Songti SC","SimSun",serif;margin-bottom:4px}
+.secret-item p{color:#c4b58a}
+.secret-item p b{color:#f0e6c8}
+.secret-close{
+  display:block;margin:24px auto 0;padding:9px 34px;
+  background:none;border:1px solid #6b5a2e;color:#c4b58a;
+  border-radius:3px;font-size:13px;cursor:pointer;letter-spacing:2px;
+}
+.secret-close:hover{background:#6b5a2e;color:#fff}
+
+@media screen and (max-width:600px){
+  .box{padding:32px 24px}
+  .paper{padding:38px 24px 28px}
+  .doc-brand{font-size:24px;letter-spacing:9px;text-indent:9px}
+  .doc-sign{padding-right:0;text-align:center}
+  .seal{position:relative;right:auto;bottom:auto;margin:26px auto 0;display:block}
+  .police h1{letter-spacing:6px}
+  .doc-foot{flex-direction:column;gap:4px;text-align:center}
+}
 </style>
 </head>
 <body>
+
+<!-- ========== 第一幕：登录 ========== -->
 <div class="login" id="loginScreen">
-<div class="box">
-<h1>新雨社管理后台</h1>
-<p>青城司专用 · 仅限授权管理员访问</p>
-<div class="error" id="loginError">密码错误，请重试</div>
-<input type="password" id="passwordInput" placeholder="请输入管理密码" autocomplete="current-password">
-<button id="loginBtn">登 录</button>
+  <div class="login-tag">青 城 司 内 部 系 统</div>
+  <div class="box" id="loginBox">
+    <h1>新雨社管理后台</h1>
+    <p>青城司专用 · 仅限授权司员访问</p>
+    <input type="text" id="accountInput" placeholder="管理员账号" value="qingchengsi" autocomplete="username" spellcheck="false">
+    <input type="password" id="passwordInput" placeholder="请输入管理密码" autocomplete="current-password">
+    <button id="loginBtn">登 录</button>
+  </div>
+  <div class="login-foot">
+    新雨社青城司 · 内部工具 v0.0.1-alpha<br>
+    本地存储模式 · 未连接数据库
+  </div>
 </div>
+
+<!-- ========== 第二幕：站务处置警示 ========== -->
+<div class="police" id="policeScreen">
+  <div class="police-bar"></div>
+  <div class="police-head">■ 站务安全提示 · 违规处置预警 ■</div>
+  <div class="police-inner">
+    <div class="police-icon">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 6 88 18v30c0 24-16 40-38 46C28 88 12 72 12 48V18L50 6z" stroke="#d81e06" stroke-width="5" fill="rgba(216,30,6,.08)"/>
+        <line x1="50" y1="24" x2="50" y2="48" stroke="#d81e06" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="50" cy="60" r="4" fill="#d81e06"/>
+      </svg>
+    </div>
+    <h1>风险提示</h1>
+    <p>您正在访问的页面 <b>新雨社管理后台</b>，经风控核查，</p>
+    <p>因长期处于「零写入、零备份、零维护」状态，现予以下线处置：</p>
+    <div class="police-list">
+      <h2>核查发现问题清单</h2>
+      ● 管理密码明文硬编码于页面源码，保密性形同虚设<br>
+      ● 全部数据仅存于浏览器本地缓存，从未写入服务器<br>
+      ● 上线至今累计有效操作 0 次，日均活跃 0 人（含管理员）<br>
+      ● 数据格式无校验、无审计、无回滚、无应急预案<br>
+      ● 依据《新雨社社区公约》第三十二条<br>
+      　及《青城司内部技术管理若干规定》第四条，予以撤编下线
+    </div>
+    <p class="org">处置单位：<br><b>新雨社青城司 · 风控与合规中心</b></p>
+    <div class="police-count">处置流程进行中，倒计时 <b id="countNum">6</b> 秒</div>
+    <div class="police-progress"><i id="progressBar"></i></div>
+  </div>
+  <div class="police-foot">
+    本页面为新雨社社区站务演示程序<br>
+    <em>非任何政府机关、执法部门或监管单位页面 · 不具法律效力</em>
+  </div>
 </div>
-<div class="admin" id="adminContainer">
-<div class="header">
-<h2>新雨社数据管理后台</h2>
-<button id="logoutBtn">退出登录</button>
+
+<!-- ========== 第三幕：撤编通告 ========== -->
+<div class="notice" id="noticeScreen">
+  <div class="paper">
+    <div class="doc-brand">新雨社青城司</div>
+    <div class="doc-brand-sub">XIN YU SHE · QINGCHENG SI</div>
+    <div class="doc-rule"></div>
+    <div class="doc-no">雨社青字〔2026〕08 号</div>
+    <div class="doc-title">关于撤销本站管理后台建制的<br>通　　告</div>
+    <div class="doc-recv">新雨社各分区、各分舵及全体群管理员：</div>
+    <div class="doc-body">
+      <p>本站管理后台（<b>/admin/</b>）系青城司为维护门户数据而<b>自建、自管、自用</b>的编辑工具。经青城司扩大会议研究决定，自即日起<b>正式撤编</b>。现将有关事项通告如下：</p>
+
+      <h3>一、撤编理由</h3>
+      <p>（一）该后台自上线以来，从未向服务器写入过任何一个字节。其全部「保存」操作均储存于浏览器本地，史称「薛定谔的数据库」；</p>
+      <p>（二）管理密码以明文形式写在本页源代码内，保密性形同虚设，安全性无从谈起；</p>
+      <p>（三）除青城司司员外，从未有第二人访问本页面，撤编无社会影响，不必交接，无需安抚。</p>
+
+      <h3>二、职能去向</h3>
+      <p>后台原各项职能<b>整体划归青城司</b>，由司长统筹，具体执行方式为：<b>直接修改 JSON 文件</b>。如需批量校验数据格式，请自备文本编辑器，本司不另行提供技术支援。</p>
+
+      <h3>三、其他事项</h3>
+      <p>（一）后台撤编后，原址改设「公告橱窗」，不保留任何交互功能，亦不再受理任何形式的修改申请；</p>
+      <p>（二）上方「风险提示页面」所载处置内容纯属虚构，仅为本司内部流程演示，由此给各位造成的精神损失，青城司深表歉意，概不负责；</p>
+      <p>（三）青城司从未在任何时候、以任何形式收集过任何访客信息<b>，包括你刚才输入的那个密码</b>。该密码仅存在于你的浏览器内存中，刷新即散。</p>
+
+      <div class="doc-end">特此通告。</div>
+
+      <div class="doc-attach">附件：无</div>
+
+      <div class="doc-sign">
+        新雨社青城司<br>
+        二〇二六年八月二十七日
+        <svg class="seal" id="sealStamp" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="青城司印章">
+          <circle cx="100" cy="100" r="94" fill="none" stroke="#c8102e" stroke-width="7" opacity=".88"/>
+          <circle cx="100" cy="100" r="80" fill="none" stroke="#c8102e" stroke-width="2" opacity=".88"/>
+          <path id="sealArc" d="M 100,100 m -66,0 a 66,66 0 1,1 132,0 a 66,66 0 1,1 -132,0" fill="none"/>
+          <text font-size="19" fill="#c8102e" font-weight="bold" letter-spacing="2" font-family="Songti SC,SimSun,serif">
+            <textPath href="#sealArc" startOffset="22%">新雨社青城司之印</textPath>
+          </text>
+          <text x="100" y="122" text-anchor="middle" font-size="34" fill="#c8102e" font-family="Songti SC,SimSun,serif" font-weight="bold" opacity=".92">青城</text>
+          <text x="100" y="150" text-anchor="middle" font-size="14" fill="#c8102e" font-family="Songti SC,SimSun,serif" opacity=".8">启</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="doc-foot">
+      <span>新雨社青城司办公室</span>
+      <span>2026 年 8 月 28 日印发</span>
+      <span>— 1 —</span>
+    </div>
+
+    <div class="doc-ps">
+      —— 本通告由新雨社青城司发布 · 档案口径与主站一致 ——<br>
+      如假包换 · 伪造公章不好 · 但我们印的是橡皮章
+    </div>
+  </div>
 </div>
-<div class="main">
-<div class="sidebar" id="sidebar">
-<button class="active" data-tab="site">站点配置</button>
-<button data-tab="news">群务公告</button>
-<button data-tab="people">人员管理</button>
-<button data-tab="zones">分区管理</button>
-<button data-tab="events">历史事件</button>
-<button data-tab="wiki">百科词条</button>
-<button data-tab="faq">常见问题</button>
-<button data-tab="banner">轮播配置</button>
-<button data-tab="timeline">编年时间线</button>
-<button data-tab="modlist">MOD列表</button><button data-tab="modtimeline">MOD项目年表</button>
-<button data-tab="history">社群史卷</button>
-<button data-tab="logs">修改日志</button>
+
+<!-- ========== 隐藏彩蛋：青城司藏档 ========== -->
+<div class="secret" id="secretLayer">
+  <div class="secret-card">
+    <div class="secret-top">
+      <h2>青城司藏档 · 卷宗编号〇〇一</h2>
+      <p>密级：绝密 · 阅后即焚（本页面不具备此功能）</p>
+    </div>
+    <div class="secret-item">
+      <h4>第一任 · 酸菜</h4>
+      <p>2022 年 6 月创建雨群，首任群主。任内主要事迹：建群。去向：2026 年 8 月 19 日荣归一区，参与讨论，史称「819 迎回二圣」。</p>
+    </div>
+    <div class="secret-item">
+      <h4>第二任 · 政委（雨姐）</h4>
+      <p>鼎盛时期掌门，任内一区两度满员，群史评价最高。2025 年 7 月 26 日将一、二区转让胡安后淡出，从此江湖只剩传说与 VIP 到期记录。</p>
+    </div>
+    <div class="secret-item">
+      <h4>第三任 · 胡安（代理）</h4>
+      <p>2025 年 7 月 26 日至今。头衔「代理总群主」。本司提醒：该同志已「代理」超过一年，暂无转正迹象，也无人催办。</p>
+    </div>
+    <div class="secret-item">
+      <h4>附注</h4>
+      <p>本卷宗未经任何在任领导审阅。若你正在阅读，说明你已经连点印章五次了——欢迎加入青城司。</p>
+    </div>
+    <button class="secret-close" id="secretClose">朕知道了</button>
+  </div>
 </div>
-<div class="content" id="adminContent">
-<div class="card" id="dataCard">
-<h3 id="dataTitle">站点配置</h3>
-<textarea id="dataEditor" spellcheck="false"></textarea>
-<div class="actions">
-<button class="btn-save" id="saveBtn">保存到本地</button>
-<button class="btn-export" id="exportBtn">导出 JSON 文件</button>
-<button class="btn-reset" id="resetBtn">恢复原始数据</button>
-</div>
-</div>
-<div class="log-panel" id="logPanel" style="display:none">
-<h3>修改日志</h3>
-<div class="log-list" id="logList"></div>
-</div>
-<div class="status" id="statusBar">
-<span id="statusFile">当前编辑：site.json</span>
-<span id="statusTime">最后更新：-</span>
-</div>
-</div>
-</div>
-</div>
+
 <script>
 (function(){
-var TABS={site:"/data/site.json",news:"/data/news.json",people:"/data/people.json",zones:"/data/zones.json",events:"/data/events.json",wiki:"/data/wiki.json",faq:"/data/faq.json",banner:"/data/banner.json",timeline:"/data/timeline.json",modlist:"/data/mod-list.json",modtimeline:"/data/mod-timeline.json",history:"/data/history-volumes.json"};
-var TAB_NAMES={site:"站点配置",news:"群务公告",people:"人员管理",zones:"分区管理",events:"历史事件",wiki:"百科词条",faq:"常见问题",banner:"轮播配置",timeline:"编年时间线",modlist:"MOD列表",modtimeline:"MOD项目年表",history:"社群史卷"};
-var currentTab="site";
-function getLogs(){try{return JSON.parse(localStorage.getItem("xys_admin_logs")||"[]");}catch(e){return[];}}
-function addLog(action,detail){var logs=getLogs();logs.unshift({time:new Date().toLocaleString("zh-CN"),action:action,detail:detail});if(logs.length>50)logs.length=50;localStorage.setItem("xys_admin_logs",JSON.stringify(logs));}
-function renderLogs(){var logs=getLogs();var list=document.getElementById("logList");if(!list)return;if(logs.length===0){list.innerHTML="<div style='padding:8px 12px;font-size:13px;color:#948c7a'>暂无修改记录</div>";return;}list.innerHTML=logs.map(function(l){return "<div class='log-item'><span style='color:#948c7a'>["+l.time+"]</span> <span style='color:#a61b29;font-weight:bold'>"+l.action+"</span>："+l.detail+"</div>";}).join("");}
-function switchTab(tab){currentTab=tab;document.getElementById("sidebar").querySelectorAll("button").forEach(function(b){b.classList.toggle("active",b.dataset.tab===tab);});if(tab==="logs"){document.getElementById("dataCard").style.display="none";document.getElementById("logPanel").style.display="block";renderLogs();}else{document.getElementById("dataCard").style.display="block";document.getElementById("logPanel").style.display="none";document.getElementById("dataTitle").textContent=TAB_NAMES[tab]||tab;document.getElementById("statusFile").textContent="当前编辑："+(TABS[tab]||tab);loadTabData(tab);}}
-async function loadTabData(tab){var editor=document.getElementById("dataEditor");editor.value="加载中...";try{var res=await fetch(TABS[tab]);if(!res.ok)throw new Error("HTTP "+res.status);var data=await res.json();editor.value=JSON.stringify(data,null,2);document.getElementById("statusTime").textContent="最后更新："+new Date().toLocaleString("zh-CN");}catch(e){editor.value="加载失败："+e.message;}}
-document.getElementById("saveBtn").addEventListener("click",function(){var editor=document.getElementById("dataEditor");try{JSON.parse(editor.value);addLog("保存",currentTab+" 数据已更新（本地缓存）");alert("数据已保存到本地缓存！\n\n注意：此操作仅保存到您浏览器的本地存储中。\n如需同步到服务器，请手动下载 JSON 文件后上传至 Cloudflare Pages。");}catch(e){alert("JSON 格式错误："+e.message);}});
-document.getElementById("exportBtn").addEventListener("click",function(){var editor=document.getElementById("dataEditor");try{var blob=new Blob([editor.value],{type:"application/json"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download=TABS[currentTab].split("/")[1];a.click();URL.revokeObjectURL(url);addLog("导出","已导出 "+TABS[currentTab].split("/")[1]);}catch(e){alert("JSON 格式错误，无法导出："+e.message);}});
-document.getElementById("resetBtn").addEventListener("click",function(){if(confirm("确定要恢复原始数据吗？此操作不可撤销。")){loadTabData(currentTab);addLog("恢复","已恢复 "+TABS[currentTab].split("/")[1]+" 原始数据");}});
-var ADMIN_PASSWORD=localStorage.getItem("xys_admin_pw")||"xinyushe2026";
-var loginScreen=document.getElementById("loginScreen");
-var adminContainer=document.getElementById("adminContainer");
-var passwordInput=document.getElementById("passwordInput");
-var loginBtn=document.getElementById("loginBtn");
-var loginError=document.getElementById("loginError");
-var logoutBtn=document.getElementById("logoutBtn");
-function checkLogin(){var saved=localStorage.getItem("xys_admin_logged");if(saved==="1"){loginScreen.style.display="none";adminContainer.style.display="block";switchTab("site");}}
-loginBtn.addEventListener("click",function(){var pw=passwordInput.value;if(pw===ADMIN_PASSWORD){localStorage.setItem("xys_admin_logged","1");loginScreen.style.display="none";adminContainer.style.display="block";loginError.style.display="none";switchTab("site");}else{loginError.style.display="block";}});
-passwordInput.addEventListener("keydown",function(e){if(e.key==="Enter")loginBtn.click();});
-logoutBtn.addEventListener("click",function(){localStorage.removeItem("xys_admin_logged");adminContainer.style.display="none";loginScreen.style.display="flex";passwordInput.value="";loginError.style.display="none";});
-checkLogin();
+  'use strict';
+
+  var loginScreen   = document.getElementById('loginScreen');
+  var loginBox      = document.getElementById('loginBox');
+  var accountInput  = document.getElementById('accountInput');
+  var passwordInput = document.getElementById('passwordInput');
+  var loginBtn      = document.getElementById('loginBtn');
+  var policeScreen  = document.getElementById('policeScreen');
+  var noticeScreen  = document.getElementById('noticeScreen');
+  var countNum      = document.getElementById('countNum');
+  var progressBar   = document.getElementById('progressBar');
+  var seal          = document.getElementById('sealStamp');
+  var secretLayer   = document.getElementById('secretLayer');
+  var secretClose   = document.getElementById('secretClose');
+
+  var verifying = false;
+  var COUNTDOWN = 6;
+
+  /* ---------- 第一幕：登录验证（本地校验，不发送任何数据） ---------- */
+  function shakeBox() {
+    loginBox.classList.remove('shake');
+    void loginBox.offsetWidth;
+    loginBox.classList.add('shake');
+  }
+
+  function enter() {
+    if (verifying) return;
+
+    if (!passwordInput.value.trim()) {
+      passwordInput.focus();
+      shakeBox();
+      return;
+    }
+
+    verifying = true;
+    loginBtn.disabled = true;
+    loginBtn.textContent = '正在验证凭据…';
+
+    /* 纯前端延时，无任何网络请求 */
+    setTimeout(function(){
+      loginScreen.classList.add('hide');
+      startDispose();
+    }, 620);
+  }
+
+  loginBtn.addEventListener('click', enter);
+  passwordInput.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') enter();
+  });
+  accountInput.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') passwordInput.focus();
+  });
+
+  /* ---------- 第二幕：处置流程 ---------- */
+  function startDispose() {
+    policeScreen.classList.add('show');
+    document.title = '【处置中】新雨社管理后台';
+
+    /* 延迟两帧，让 transition 生效 */
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        progressBar.style.width = '0%';
+      });
+    });
+
+    var sec = COUNTDOWN;
+    countNum.textContent = sec;
+
+    var timer = setInterval(function(){
+      sec--;
+      if (sec <= 0) {
+        clearInterval(timer);
+        policeScreen.classList.remove('show');
+        policeScreen.classList.add('hide');
+        noticeScreen.classList.add('show');
+        noticeScreen.scrollTop = 0;
+        document.title = '关于撤销本站管理后台建制的通告 · 新雨社青城司';
+      } else {
+        countNum.textContent = sec;
+      }
+    }, 1000);
+  }
+
+  /* ---------- 彩蛋：印章连点五次 ---------- */
+  var clicks = 0;
+  seal.addEventListener('click', function(){
+    clicks++;
+    seal.classList.remove('shake');
+    void seal.offsetWidth;
+    seal.classList.add('shake');
+    if (clicks >= 5) {
+      clicks = 0;
+      secretLayer.classList.add('show');
+    }
+  });
+
+  secretClose.addEventListener('click', function(){
+    secretLayer.classList.remove('show');
+  });
+
+  secretLayer.addEventListener('click', function(e){
+    if (e.target === secretLayer) secretLayer.classList.remove('show');
+  });
+
+  /* 防止误触后退/刷新丢进度——此处仅做提示，不实际拦截 */
+  window.addEventListener('beforeunload', function(e){
+    if (document.getElementById('noticeScreen').classList.contains('show')) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
 })();
 </script>
 </body>
